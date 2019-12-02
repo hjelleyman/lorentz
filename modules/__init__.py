@@ -7,5 +7,12 @@ Scripts
 
     lorentz
     -------
-        The code for the lorentz notebook. This notebook focuses on Special Relativity
+        The code for the lorentz notebook. This notebook focuses on Special Relativity.
+
+    rotation
+    --------
+        The code for the rotation notebook. This notebook focuses on rotation in different reference frames.
 """
+
+from modules import lorentz as lz
+from modules import rotation as rt
