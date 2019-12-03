@@ -4,6 +4,7 @@ helper functions for the lorentz notebook.
 """
 import numpy as np
 import matplotlib.pyplot as plt
+plt.style.use('modules/matplotlibrc')
 
 
 time=np.linspace(-6,20,100)

@@ -9,7 +9,7 @@ This script contains helper functions for the rotation notebook.
 import numpy as np
 import matplotlib.pyplot as plt
 from ipywidgets import interactive, FloatSlider
-plt.style.use('modules/matplotlibrc')
+# plt.style.use('modules/matplotlibrc')
 
 time=np.linspace(-6,20,100)
 space=np.linspace(-20,20,100)
@@ -34,16 +34,16 @@ def plot_euclidian_vector():
         plt.plot([0,0],[-2,2],'k', alpha = 0.1)
         plt.plot([0,x], [0,y],'r',label = '$[x,y]=[sin(\\theta), cos(\\theta)]$')
         plt.plot(0.1*np.cos(thetavec), 0.1*np.sin(thetavec))
-        plt.text(0.13*np.cos(np.pi/4), 0.1*np.sin(np.pi/4),'$\\theta = $'+f'{theta:.2f} radians')
+        plt.text(0.13*np.cos(np.pi/4), 0.1*np.sin(np.pi/4),'$\\theta = $'+'{:.2f} radians'.format(theta))
         
         # x length
-        plt.plot([0,x], [y,y],'g',label = f'x = {x:.02f}')
+        plt.plot([0,x], [y,y],'g',label = 'x = {:.02f}'.format(x))
         plt.text(x/2, y+0.05,'x')
         # y length
-        plt.plot([x,x], [0,y],'b',label = f'y = {y:.02f}')
+        plt.plot([x,x], [0,y],'b',label = 'y = {:.02f}'.format(y))
         plt.text(x+0.05, y/2,'y')
         
-        plt.plot([],[],label = '$\\sqrt{x^2+y^2}=$'+f'{np.sqrt(x**2+y**2):.2f}')
+        plt.plot([],[],label = '$\\sqrt{x^2+y^2}=$'+'{:.2f}'.format(np.sqrt(x**2+y**2)))
         
         # axis stuff
 #         plt.axis('off')
@@ -53,7 +53,7 @@ def plot_euclidian_vector():
         plt.legend(loc='center left', bbox_to_anchor= (1.0, 0.5), ncol=1, borderaxespad=0.5, frameon=False)
         plt.plot
         
-    interactive_plot = interactive(f, theta=FloatSlider(min=0, max=2*np.pi, step=1e-4, continuous_update=False, description="theta", value=np.pi/4))
+    interactive_plot = interactive(f, theta=FloatSlider(min=0, max=2*np.pi, step=1e-4, continuous_update=False, description="$\\theta$", value=np.pi/4))
     output = interactive_plot.children[-1]
 #     output.layout.height = '650px'
     return interactive_plot
@@ -78,14 +78,14 @@ def plot_2_euclidian_vectors():
         
         plt.plot([0,x], [0,y],'r',label = '${A}=[sin(\\theta_1), cos(\\theta_1)]$')
         plt.plot(0.1*np.cos(thetavec), 0.1*np.sin(thetavec), 'r')
-        plt.text(0.13*np.cos(np.pi/4), 0.1*np.sin(np.pi/4),'$\\theta_1 = $'+f'{theta:.2f} radians')
+        plt.text(0.13*np.cos(np.pi/4), 0.1*np.sin(np.pi/4),'$\\theta_1 = $'+'{:.2f} radians'.format(theta))
         
-        plt.plot([0,x2], [0,y2],'b',label = '${B}=[sin(\\theta_2), cos(\\theta_2)]$')
+        plt.plot([0,x2], [0,y2],'b',label = '$B= [sin(\\theta_2), cos(\\theta_2)]$')
         plt.plot(0.2*np.cos(thetavec2)*(1+0.05*thetavec2), 0.2*np.sin(thetavec2)*(1+0.05*thetavec2), 'b')
-        plt.text(0.23*np.cos(np.pi/4), 0.23*np.sin(np.pi/4),'$\\theta_2 = $'+f'{theta2:.2f} radians')
+        plt.text(0.23*np.cos(np.pi/4), 0.23*np.sin(np.pi/4),'$\\theta_2 = $'+'{:.2f} radians'.format(theta2))
         
         
-        plt.plot([],[],label = '${A}\cdot {B} = $'+f'{x*x2+y*y2:.2f}')
+        plt.plot([],[],label = '${A}\cdot B = $'+'{:.2f}'.format(x*x2+y*y2))
         
         # axis stuff
 #         plt.axis('off')
@@ -94,7 +94,7 @@ def plot_2_euclidian_vectors():
         plt.legend(loc='center left', bbox_to_anchor= (1.0, 0.5), ncol=1, borderaxespad=0.5, frameon=False)
         plt.plot
         
-    interactive_plot = interactive(f, theta=FloatSlider(min=0, max=2*np.pi, step=1e-4, continuous_update=False, description="theta", value=4), del_theta = FloatSlider(min=0, max=2*np.pi, step=1e-4, continuous_update=False, description="delta theta", value=0.3))
+    interactive_plot = interactive(f, theta=FloatSlider(min=0, max=2*np.pi, step=1e-4, continuous_update=False, description="$\\theta$", value=4), del_theta = FloatSlider(min=-np.pi, max=np.pi, step=1e-4, continuous_update=False, description="$\\theta_2 - \\theta_1$", value=0.3))
     output = interactive_plot.children[-1]
 #     output.layout.height = '650px'
     return interactive_plot
