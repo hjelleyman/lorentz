@@ -13,9 +13,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from IPython.display import HTML
+import pandas as pd
 
-
-plt.style.use('modules/matplotlibrc')
 
 from modules import lorentz as lz
 
@@ -179,3 +178,5 @@ def plot_2_euclidian_vectors():
     output = interactive_plot.children[-1]
 #     output.layout.height = '650px'
     return interactive_plot
+
+

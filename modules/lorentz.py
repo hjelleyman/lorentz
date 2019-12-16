@@ -4,17 +4,21 @@ helper functions for the lorentz notebook.
 """
 import numpy as np
 import matplotlib.pyplot as plt
-plt.style.use('modules/matplotlibrc')
 from ipywidgets import interactive, FloatSlider
 
+from numpy import genfromtxt
+my_data = genfromtxt('my_file.csv', delimiter=',')
 
-
-time=np.linspace(-6,20,100)
-space=np.linspace(-20,20,100)
+def findnearest(array, value):
+    idx = np.abs(array - value).argmin()
+    return array[idx]
 
 def plot_empty_space():
     """Plots an empty plot to represent empty space."""
-    plt.figure(1)
+    time = genfromtxt('lz_time.csv', delimiter=',')
+    space = genfromtxt('lz_space.csv', delimiter=',')
+    
+    plt.figure()
     plt.plot(space,time,linewidth=0,label='Playground')
     plt.legend()
     plt.show()
@@ -22,9 +26,9 @@ def plot_empty_space():
     
 def plot_light_cones():
     """Plots light cones with labels for different regions of spacetime."""
-    line1=np.linspace(-20,20,100)
-    line2=np.linspace(20,-20,100)
-    plt.figure(2)
+    line1 = genfromtxt('lz_line1.csv', delimiter=',')
+    line2 = genfromtxt('lz_line2.csv', delimiter=',')
+    plt.figure()
     plt.plot(space,line1,linewidth=1,color='red')
     plt.plot(space,line2,linewidth=1,color='red')
     plt.xlim(-20,20)
@@ -52,8 +56,8 @@ def plot_light_cones():
     
     
 def plot_event_at_origin():
-    line1=np.linspace(-20,20,100)
-    line2=np.linspace(20,-20,100)
+    line1 = genfromtxt('lz_line1.csv', delimiter=',')
+    line2 = genfromtxt('lz_line2.csv', delimiter=',')
     plt.figure(3)
     plt.plot(space,line1,linewidth=1,color='red')
     plt.plot(space,line2,linewidth=1,color='red')
@@ -67,15 +71,16 @@ def plot_event_at_origin():
     
 def plot_flashing_lighthouse():
     """Plots the sequence of lights flashing at a lighthouse."""
-    line1=np.linspace(-20,20,100)
-    line2=np.linspace(20,-20,100)
+    line1 = genfromtxt('lz_line1.csv', delimiter=',')
+    line2 = genfromtxt('lz_line2.csv', delimiter=',')
+    line3 = genfromtxt('lz_line3.csv', delimiter=',')
+    line4 = genfromtxt('lz_line4.csv', delimiter=',')
+    
     plt.figure(4)
     plt.plot(space,line1,linewidth=1,color='red')
     plt.plot(space,line2,linewidth=1,color='red')
     plt.xlim(-20,20)
     plt.ylim(-2,20)
-    line3=np.zeros(11)
-    line4=np.linspace(0,10,11)
     plt.plot(line3, line4, 'o')
 
     plt.title('Flashing lighthouse at the origin')
@@ -88,20 +93,16 @@ def lorentz(v):
 
 def plot_lighthouse_transform():
     """plots a transformed persepective of a lighthouse"""
-    line1=np.linspace(-20,20,100)
-    line2=np.linspace(20,-20,100)
-    line3=np.zeros(11)
-    line4=np.linspace(0,10,11)
-    line5=np.zeros(len(line3))
-    line6=np.zeros(len(line3))
-    for ii in range(len(line3)):
-        point=np.array([line4[ii],line3[ii]])  #remember that time is the first element.
-        point=np.dot(lorentz(0.8),point)   #dot does matrix multiplication
-        line5[ii]=point[0]
-        line6[ii]=point[1]
-        #print(point)
-
-        plt.figure(5)
+    line1 = genfromtxt('lz_line1.csv', delimiter=',')
+    line2 = genfromtxt('lz_line2.csv', delimiter=',')
+    line3 = genfromtxt('lz_line3.csv', delimiter=',')
+    line4 = genfromtxt('lz_line4.csv', delimiter=',')
+    line5 = pd.read_hdf('data/lz_line5.hdf', 'line5')
+    line6 = pd.read_hdf('data/lz_line6.hdf', 'line6')
+    line5 = line5[findnearest(line5.columns,0.8)]
+    line6 = line6[findnearest(line6.columns,0.8)]
+    
+    plt.figure()
     plt.plot(space,line1,linewidth=1,color='red')
     plt.plot(space,line2,linewidth=1,color='red')
     plt.xlim(-20,20)
@@ -114,26 +115,22 @@ def plot_lighthouse_transform():
     
     
 def interactive_lorentz_1():
-    time=np.linspace(-6,20,100)
-    space=np.linspace(-20,20,100)
-    line1=np.linspace(-20,20,100)
-    line2=np.linspace(20,-20,100)
-    line3=np.zeros(11)
-    line4=np.linspace(0,10,11)
-    line5=np.zeros(len(line3))
-    line6=np.zeros(len(line3))
+    time = genfromtxt('lz_time.csv', delimiter=',')
+    space = genfromtxt('lz_space.csv', delimiter=',')
+    line1 = genfromtxt('lz_line1.csv', delimiter=',')
+    line2 = genfromtxt('lz_line2.csv', delimiter=',')
+    line3 = genfromtxt('lz_line3.csv', delimiter=',')
+    line4 = genfromtxt('lz_line4.csv', delimiter=',')
+    line5 = pd.read_hdf('data/lz_line5.hdf', 'line5')
+    line6 = pd.read_hdf('data/lz_line6.hdf', 'line6')
     
     def f(u):
         plt.figure(6,figsize=[12.0, 9.0])
-        untransformed = np.array([line4,line3])
-        transformed = np.dot(lorentz(u),untransformed)
-        line5 = transformed[0]
-        line6 = transformed[1]
         plt.plot(space,line1,linewidth=1,color='red')
         plt.plot(space,line2,linewidth=1,color='red')
         plt.xlim(-20,20)
         plt.ylim(-2,20)
-        plt.plot(line6, line5, 'o')
+        plt.plot(line6[findnearest(line6.columns, u)], line5[ufindnearest(line5.columns, u)], 'o')
         plt.plot(line3, line4, 'o',color='green')
         plt.title('Flashing lighthouse at the origin - moving observer')
 
