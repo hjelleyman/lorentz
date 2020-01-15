@@ -180,3 +180,80 @@ def plot_2_euclidian_vectors():
     return interactive_plot
 
 
+def animate_2_euclidian_vedctors():
+    def init():
+        line_1.set_data([], [])
+        xangle_1.set_data([],[])
+        text_1.set_text('')
+        
+        line_2.set_data([], [])
+        xangle_2.set_data([],[])
+        text_2.set_text('')
+        return [line_1,text_1,xangle_1, 
+                line_2,text_2,xangle_2]
+    
+    def animate_constant_delta(theta):
+        theta = theta *np.pi/50
+        del_theta = 0.6
+        theta2 = (theta + del_theta) % (2*np.pi)
+        thetavec = np.linspace(0,theta)
+        thetavec2 = np.linspace(0,theta2)
+        x = np.cos(theta)
+        y = np.sin(theta)
+        x2 = np.cos(theta2)
+        y2 = np.sin(theta2)
+#         plt.legend(loc='center left', bbox_to_anchor= (1.0, 0.5), ncol=1, borderaxespad=0.5, frameon=False)
+
+        line_1.set_data([0,x], [0,y])
+        xangle_1.set_data(0.1*np.cos(thetavec), 0.1*np.sin(thetavec))
+        text_1.set_text('$\\theta_1 = $'+'{:.2f} radians'.format(theta))
+        
+        line_2.set_data([0,x2], [0,y2])
+        xangle_2.set_data(0.2*np.cos(thetavec2)*(1+0.05*thetavec2), 0.2*np.sin(thetavec2)*(1+0.05*thetavec2))
+        text_2.set_text('$\\theta_2 = $'+'{:.2f} radians'.format(theta2))
+        return [line_1,text_1,xangle_1, 
+                line_2,text_2,xangle_2]
+    
+    def animate_changing_delta(del_theta):
+        del_theta = del_theta *np.pi/50
+        theta = 0.1
+        theta2 = (theta + del_theta) % (2*np.pi)
+        thetavec = np.linspace(0,theta)
+        thetavec2 = np.linspace(0,theta2)
+        x = np.cos(theta)
+        y = np.sin(theta)
+        x2 = np.cos(theta2)
+        y2 = np.sin(theta2)
+#         plt.legend(loc='center left', bbox_to_anchor= (1.0, 0.5), ncol=1, borderaxespad=0.5, frameon=False)
+
+        line_1.set_data([0,x], [0,y])
+        xangle_1.set_data(0.1*np.cos(thetavec), 0.1*np.sin(thetavec))
+        text_1.set_text('$\\theta_1 = $'+'{:.2f} radians'.format(theta))
+        
+        line_2.set_data([0,x2], [0,y2])
+        xangle_2.set_data(0.2*np.cos(thetavec2)*(1+0.05*thetavec2), 0.2*np.sin(thetavec2)*(1+0.05*thetavec2))
+        text_2.set_text('$\\theta_2 = $'+'{:.2f} radians'.format(theta2))
+        return [line_1,text_1,xangle_1, 
+                line_2,text_2,xangle_2]
+    
+    fig, ax = plt.subplots(figsize=(10,10))
+    plt.plot([-2,2],[0,0],'k', alpha = 0.1)
+    plt.plot([0,0],[-2,2],'k', alpha = 0.1)
+    line_1, = ax.plot([],[],'r', label = '$[x,y]=[sin(\\theta_1), cos(\\theta_1)]$')
+    xangle_1, = ax.plot([],[],'r')
+    text_1 = plt.text(0.13*np.cos(np.pi/4), 0.1*np.sin(np.pi/4),'')
+    
+    line_2, = ax.plot([],[],'b', label = '$[x,y]=[sin(\\theta_2), cos(\\theta_2)]$')
+    xangle_2, = ax.plot([],[],'b')
+    text_2 = plt.text(0.23*np.cos(np.pi/4), 0.23*np.sin(np.pi/4),'')
+
+    # axis stuff
+    plt.axis('off')
+    plt.xlim([-1.1,1.1])
+    plt.ylim([-1.1,1.1])
+    
+    ani_constant_delta = animation.FuncAnimation(fig, animate_constant_delta, init_func=init,
+                                   frames=100, interval=100, blit=True)
+    ani_changing_delta = animation.FuncAnimation(fig, animate_changing_delta, init_func=init,
+                                   frames=100, interval=100, blit=True)
+    return (HTML(ani_constant_delta.to_jshtml()), HTML(ani_changing_delta.to_jshtml()))
