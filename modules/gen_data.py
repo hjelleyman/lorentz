@@ -58,21 +58,6 @@ def lorentz():
     
     
     
-    
-
-def rotation():
-    pass
-
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
