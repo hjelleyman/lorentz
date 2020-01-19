@@ -57,7 +57,7 @@ def plot_empty_space():
     time = genfromtxt('data/lz_time.csv', delimiter=',')
     space = genfromtxt('data/lz_space.csv', delimiter=',')
     
-    plt.figure()
+    fig, ax = plt.subplots(figsize =(10,7))
     plt.plot(space,time,linewidth=0,label='Playground')
     plt.legend()
     plt.show()
@@ -69,7 +69,7 @@ def plot_light_cones():
     space = genfromtxt('data/lz_space.csv', delimiter=',')
     line1 = genfromtxt('data/lz_line1.csv', delimiter=',')
     line2 = genfromtxt('data/lz_line2.csv', delimiter=',')
-    plt.figure()
+    fig, ax = plt.subplots(figsize =(10,7))
     plt.plot(space,line1,linewidth=1,color='red')
     plt.plot(space,line2,linewidth=1,color='red')
     plt.xlim(-20,20)
@@ -102,7 +102,7 @@ def plot_event_at_origin():
     space = genfromtxt('data/lz_space.csv', delimiter=',')
     line1 = genfromtxt('data/lz_line1.csv', delimiter=',')
     line2 = genfromtxt('data/lz_line2.csv', delimiter=',')
-    plt.figure(3)
+    fig, ax = plt.subplots(figsize =(10,7))
     plt.plot(space,line1,linewidth=1,color='red')
     plt.plot(space,line2,linewidth=1,color='red')
     plt.xlim(-20,20)
@@ -122,7 +122,7 @@ def plot_flashing_lighthouse():
     line3 = genfromtxt('data/lz_line3.csv', delimiter=',')
     line4 = genfromtxt('data/lz_line4.csv', delimiter=',')
     
-    plt.figure(4)
+    fig, ax = plt.subplots(figsize =(10,7))
     plt.plot(space,line1,linewidth=1,color='red')
     plt.plot(space,line2,linewidth=1,color='red')
     plt.xlim(-20,20)
@@ -150,7 +150,7 @@ def plot_lighthouse_transform():
     line5 = line5[findnearest(line5.columns,0.8)]
     line6 = line6[findnearest(line6.columns,0.8)]
     
-    plt.figure()
+    fig, ax = plt.subplots(figsize =(10,7))
     plt.plot(space,line1,linewidth=1,color='red')
     plt.plot(space,line2,linewidth=1,color='red')
     plt.xlim(-20,20)
@@ -193,14 +193,14 @@ def animation_lorentz_1():
         return l3
     
     
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize =(10,7))
     ax.set_xlabel('distance')
     ax.set_ylabel('time')
     l1, = ax.plot([], [], lw=1,color='red')
     l2, = ax.plot([], [], lw=1,color='red')
     l3, = ax.plot([], [], 'o', color = 'blue')
     l4, = ax.plot([], [], 'o', color = 'green')
-    text = plt.text(10,3,'$u$ = {:.2f}'.format(0.1))
+    text = plt.text(10,3,'$u$ = {:.2f}'.format(0.1), size = 20)
     
     ani = animation.FuncAnimation(fig, run, datagen, blit=False, interval=100,
                               repeat=True, init_func=init)
@@ -217,9 +217,9 @@ def animation_with_hyperbolae():
     line5 = pd.read_hdf('data/lz_line5.hdf', 'line5')
     line6 = pd.read_hdf('data/lz_line6.hdf', 'line6')
     
-    def datagen(u=1.05):
+    def datagen(u=1.01):
         while u > -1:
-            u -= 0.05
+            u -= 0.01
             yield u
     
     def init():
@@ -231,11 +231,11 @@ def animation_with_hyperbolae():
         
     def run(u):
         l3.set_data(line6[findnearest(line6.columns, u)], line5[findnearest(line5.columns, u)])
-        text.set_text('$u$ = {:.2f}c'.format(u))
+        text.set_text('$u$ = {:.2f}c\n$T$ = {:.2f}$T_0$'.format(u,1/np.sqrt(1-u*u)))
         return l3
     
     
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize =(10,7))
     ax.set_xlabel('distance')
     ax.set_ylabel('time')
     l1, = ax.plot([], [], lw=1,color='red')
@@ -280,20 +280,18 @@ def animation_with_hyperbolae():
     plt.plot(ln8[:,1],ln8[:,0],linewidth=1,color='black')
     plt.plot(ln9[:,1],ln9[:,0],linewidth=1,color='black')
     plt.plot(ln10[:,1],ln10[:,0],linewidth=1,color='black')
-    text = plt.text(10,3,'$u$ = {:.2f}'.format(0.1))
+    text = plt.text(10,3,'$u$ = {:.2f}'.format(0.1), size = 20)
     
-    ani = animation.FuncAnimation(fig, run, datagen, blit=False, interval=100,
+    ani = animation.FuncAnimation(fig, run, datagen, blit=False, interval=200,
                               repeat=True, init_func=init)
     return HTML(ani.to_jshtml())
-
-#------------------------------------------------------------ WIP --------------------------------------------------
 
 def lighthouse():
     time = genfromtxt('data/lz_time.csv', delimiter=',')
     space = genfromtxt('data/lz_space.csv', delimiter=',')
     line1=np.linspace(-20,20,100)
     line2=np.linspace(20,-20,100)
-    plt.figure(8)
+    fig, ax = plt.subplots(figsize =(10,7))
     plt.plot(space,line1,linewidth=1,color='red')
     plt.plot(space,line2,linewidth=1,color='red')
     plt.xlim(-15,15)
@@ -327,67 +325,53 @@ def animated_lighthouse():
         l2.set_data(space,line2)
         l4.set_data(line3, line4)
         l5.set_data(line3+1, line4)
+        l6.set_data(line3+1, line4)
         ax.set_xlim(-20,20)
         ax.set_ylim(-2,20)
         
     def run(u):
         l3.set_data(line6[findnearest(line6.columns, u)], line5[findnearest(line5.columns, u)])
-        text.set_text('$u$ = {:.2f}c'.format(u))
-        return l3
+        line3=np.zeros(11)
+        line4=np.linspace(0,10,11)
+        newx = np.zeros(11)
+        newy = np.zeros(11)
+        for ii in range(len(line3)):
+            point2=np.array([line4[ii],line3[ii]+1])  #remember that time is the first element.
+            point2=np.dot(lorentz(u),point2)   #dot does matrix multiplication
+            newy[ii]=point2[0]
+            newx[ii]=point2[1]
+        l6.set_data(newx,newy)
+        
+        text.set_text('$u$ = {:.2f}c\n$L$ = {:.2f}$L_0$'.format(u,np.sqrt(1-u*u)))
+        return l3,l6
     
     
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize =(10,7))
     ax.set_xlabel('distance')
     ax.set_ylabel('time')
     l1, = ax.plot([], [], lw=1,color='red')
     l2, = ax.plot([], [], lw=1,color='red')
-    l3, = ax.plot([], [], 'o', color = 'blue')
-    l4, = ax.plot([], [], 'o', color = 'green')
-    l5, = ax.plot([], [],'o', color = 'red')
-    l5, = ax.plot([], [],'o', color = 'orange')
+    l3, = ax.plot([], [], 'o-', color = 'blue')
+    l4, = ax.plot([], [], 'o-', color = 'blue', alpha = 0.3)
+    l5, = ax.plot([], [],'o-', color = 'red', alpha = 0.3)
+    l6, = ax.plot([], [],'o-', color = 'red')
     
     velocities=np.linspace(-0.999,0.999,2001)
-
-    ln1=np.zeros((len(velocities),2))
-    ln2=np.zeros((len(velocities),2))
-    ln3=np.zeros((len(velocities),2))
-    ln4=np.zeros((len(velocities),2))
-    ln5=np.zeros((len(velocities),2))
-    ln6=np.zeros((len(velocities),2))
-    ln7=np.zeros((len(velocities),2))
-    ln8=np.zeros((len(velocities),2))
-    ln9=np.zeros((len(velocities),2))
-    ln10=np.zeros((len(velocities),2))
-    
-
-    for ii in range(len(velocities)):
-        vel=velocities[ii]
-        gamma=1.0/np.sqrt(1.0-vel*vel)
-        ln1[ii]=np.dot(lorentz(vel),np.array([1,0]))
-        ln2[ii]=np.dot(lorentz(vel),np.array([2,0]))
-        ln3[ii]=np.dot(lorentz(vel),np.array([3,0]))
-        ln4[ii]=np.dot(lorentz(vel),np.array([4,0]))
-        ln5[ii]=np.dot(lorentz(vel),np.array([5,0]))
-        ln6[ii]=np.dot(lorentz(vel),np.array([6,0]))
-        ln7[ii]=np.dot(lorentz(vel),np.array([7,0]))
-        ln8[ii]=np.dot(lorentz(vel),np.array([8,0]))
-        ln9[ii]=np.dot(lorentz(vel),np.array([9,0]))
-        ln10[ii]=np.dot(lorentz(vel),np.array([10,0]))
-    plt.plot(ln1[:,1],ln1[:,0],linewidth=1,color='black')
-    plt.plot(ln2[:,1],ln2[:,0],linewidth=1,color='black')
-    plt.plot(ln3[:,1],ln3[:,0],linewidth=1,color='black')
-    plt.plot(ln4[:,1],ln4[:,0],linewidth=1,color='black')
-    plt.plot(ln5[:,1],ln5[:,0],linewidth=1,color='black')
-    plt.plot(ln6[:,1],ln6[:,0],linewidth=1,color='black')
-    plt.plot(ln7[:,1],ln7[:,0],linewidth=1,color='black')
-    plt.plot(ln8[:,1],ln8[:,0],linewidth=1,color='black')
-    plt.plot(ln9[:,1],ln9[:,0],linewidth=1,color='black')
-    plt.plot(ln10[:,1],ln10[:,0],linewidth=1,color='black')
-    text = plt.text(10,3,'$u$ = {:.2f}'.format(0.1))
+    lines = [np.zeros((len(velocities),2))] * 11
+    for j in range(len(lines)):
+        for ii in range(len(velocities)):
+            vel=velocities[ii]
+            gamma=1.0/np.sqrt(1.0-vel*vel)
+            lines[j][ii] = np.dot(lorentz(vel),np.array([j,0]))
+        plt.plot(lines[j][:,1], lines[j][:,0],linewidth=1,color='black',alpha=0.5)
+    text = plt.text(10,3,'$u$ = {:.2f}'.format(0.1), size = 20, fontname = 'computer modern')
     
     ani = animation.FuncAnimation(fig, run, datagen, blit=False, interval=100,
                               repeat=True, init_func=init)
     return HTML(ani.to_jshtml())
+
+#------------------------------------------------------------ WIP --------------------------------------------------
+
     
 #------------------------------------------------------------ Currently Unused ------------------------------------------------
     
