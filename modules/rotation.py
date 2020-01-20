@@ -192,16 +192,17 @@ def Minkowski_2_vectors_animate():
     def run(u):
         u2 = u + 0.3
         
-        t = 9
-        x = 0
-        vec = [x,t]
-        x1, t1 = np.dot(lorentz(u),vec)
-        x2, t2 = np.dot(lorentz(u2),vec)
+        vec1 = [0,9]
+        vec2 = [0,7]
+        x1, t1 = np.dot(lorentz(u),vec1)
+        x2, t2 = np.dot(lorentz(u2),vec2)
         
         l3.set_data([0,x1],[0,t1])
         l4.set_data([0,x2],[0,t2])
         
-        text.set_text('$u_1$ = {:.2f}c\n$u_2$ = {:.2f}c\n$A\\cdot B$ = {:.2f}'.format(u,u2,(t2*t1) - (x2*x1)))
+        c = 3e8
+        
+        text.set_text('$u_1$ = {:.2f}c\n$u_2$ = {:.2f}c\n$A\\cdot B$ = {:.2f}'.format(u,u2,(t2*t1)-(x2*x1)))
     
     
     fig, ax = plt.subplots(figsize =(10,7))
