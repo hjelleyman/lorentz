@@ -167,9 +167,8 @@ def animate_2_euclidian_vedctors():
                                    frames=100, interval=100, blit=True)
     return (HTML(ani_constant_delta.to_jshtml()), HTML(ani_changing_delta.to_jshtml()))
 
-#------------------------------------------------------------ WIP --------------------------------------------------
 
-def Minkowski_2_vectors_animate():
+def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
     """Creates an animation showing how regularly spaced events move through space for a moving observer with hyperbolae."""
     time=np.linspace(-6,20,100)
     space=np.linspace(-20,20,100)
@@ -190,10 +189,8 @@ def Minkowski_2_vectors_animate():
         ax.set_ylim(-2,20)
         
     def run(u):
-        u2 = u + 0.3
+        u2 = u + udelta
         
-        vec1 = [0,9]
-        vec2 = [0,7]
         x1, t1 = np.dot(lorentz(u),vec1)
         x2, t2 = np.dot(lorentz(u2),vec2)
         
@@ -219,7 +216,7 @@ def Minkowski_2_vectors_animate():
         plt.plot(lines[j][:,1], lines[j][:,0],linewidth=1,color='black',alpha=0.5)
         
         
-    text = plt.text(10,3,'$u$ = {:.2f}'.format(0.1))
+    text = plt.text(10,3,'$u$ = {:.2f}'.format(0.1), size = 20)
     l1, = ax.plot([], [], lw=1,color='red')
     l2, = ax.plot([], [], lw=1,color='red')
     l3, = ax.plot([], [], '-o', lw=3, color = 'blue')
@@ -228,6 +225,11 @@ def Minkowski_2_vectors_animate():
     ani = animation.FuncAnimation(fig, run, datagen, blit=False, interval=100,
                               repeat=True, init_func=init)
     return HTML(ani.to_jshtml())
+
+
+#------------------------------------------------------------ WIP ----------------------------------------------------------
+
+
 
 #------------------------------------------------------------ Currently Unused ---------------------------------------------
 
