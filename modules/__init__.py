@@ -16,3 +16,4 @@ Scripts
 
 from modules import lorentz as lz
 from modules import rotation as rt
+from modules import doppler as dp
