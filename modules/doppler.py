@@ -18,6 +18,8 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from IPython.display import HTML
 
+from modules.lorentz import lorentz
+
 #-------------------------------------------------- Implemented functions --------------------------------------------------
 
 
@@ -139,3 +141,38 @@ def animate_transverse_moving_source(N=200):
 
 #-------------------------------------------------- WIP --------------------------------------------------
 
+def plot_relativistic_observer(v=0, c = 3e8, N=200, v_wave = 3e8):
+    
+    
+    theta = np.linspace(0,2*np.pi,100)
+    time = np.arange(N)
+
+    def run(t, tstart, circles):
+        if t % (N//10) == 0:
+            tstart += [t]
+            circles += plt.plot([],[],'black')
+            
+        for i in range(len(circles)):
+            
+            R = v_wave*(t - tstart[i])
+            
+            betax = v*np.cos(theta)/c
+            xvec = (R * np.cos(theta)) * np.sqrt((1+betax)/(1-betax))
+            
+            yvec = R*np.sin(theta)
+            
+            circles[i].set_data(xvec,yvec)
+
+    fig, ax = plt.subplots(figsize = (10,10))
+    # axis stuff
+    plt.xticks([],[])
+    plt.yticks([],[])
+    plt.xlim([-v_wave*N*1.5,v_wave*N*1.5])
+    plt.ylim([-v_wave*N*1.5,v_wave*N*1.5])
+    
+    source, = plt.plot([0],[0], 'o', color = 'black', markersize = 10)
+    circles = []
+    tstart = []
+    
+    ani = animation.FuncAnimation(fig, run, frames = time, blit=False, interval=10000/N, repeat=True, fargs = [tstart, circles])
+    return HTML(ani.to_jshtml())
