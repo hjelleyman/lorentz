@@ -217,18 +217,7 @@ def animation_with_hyperbolae():
     line5 = pd.read_hdf('data/lz_line5.hdf', 'line5')
     line6 = pd.read_hdf('data/lz_line6.hdf', 'line6')
     
-    def datagen(u=1.01):
-        while u > -1:
-            u -= 0.01
-            yield u
     
-    def init():
-        l1.set_data(space, line1)
-        l2.set_data(space, line2)
-        l4.set_data(line3, line4)
-        ax.set_xlim(-20,20)
-        ax.set_ylim(-2,20)
-        
     def run(u):
         l3.set_data(line6[findnearest(line6.columns, u)], line5[findnearest(line5.columns, u)])
         text.set_text('$u$ = {:.2f}c\n$T$ = {:.2f}$T_0$'.format(u,1/np.sqrt(1-u*u)))
@@ -242,6 +231,12 @@ def animation_with_hyperbolae():
     l2, = ax.plot([], [], lw=1,color='red')
     l3, = ax.plot([], [], 'o', color = 'blue')
     l4, = ax.plot([], [], 'o', color = 'green')
+    
+    l1.set_data(space,line1)
+    l2.set_data(space,line2)
+    l4.set_data(line3, line4)
+    ax.set_xlim(-20,20)
+    ax.set_ylim(-2,20)
     
     velocities=np.linspace(-0.999,0.999,2001)
 
@@ -282,8 +277,7 @@ def animation_with_hyperbolae():
     plt.plot(ln10[:,1],ln10[:,0],linewidth=1,color='black')
     text = plt.text(10,3,'$u$ = {:.2f}'.format(0.1), size = 20)
     
-    ani = animation.FuncAnimation(fig, run, datagen, blit=False, interval=200,
-                              repeat=True, init_func=init)
+    ani = animation.FuncAnimation(fig, run, frames = np.linspace(1,-1,200), blit=False, interval=20, repeat=True)
     return HTML(ani.to_jshtml())
 
 def lighthouse():
@@ -314,11 +308,6 @@ def animated_lighthouse():
     line4=np.linspace(0,10,11)
     line5 = pd.read_hdf('data/lz_line5.hdf', 'line5')
     line6 = pd.read_hdf('data/lz_line6.hdf', 'line6')
-    
-    def datagen(u=1.05):
-        while u > -1:
-            u -= 0.05
-            yield u
     
     def init():
         l1.set_data(space,line1)
@@ -366,7 +355,7 @@ def animated_lighthouse():
         plt.plot(lines[j][:,1], lines[j][:,0],linewidth=1,color='black',alpha=0.5)
     text = plt.text(10,3,'$u$ = {:.2f}'.format(0.1), size = 20, fontname = 'computer modern')
     
-    ani = animation.FuncAnimation(fig, run, datagen, blit=False, interval=100,
+    ani = animation.FuncAnimation(fig, run, np.linspace(1,-1,100), blit=False, interval=20,
                               repeat=True, init_func=init)
     return HTML(ani.to_jshtml())
 

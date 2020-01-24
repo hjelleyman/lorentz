@@ -139,8 +139,6 @@ def animate_transverse_moving_source(N=200):
     ani = animation.FuncAnimation(fig, run, frames = range(N), blit=False, interval=50, repeat=True, fargs = [xstart, tstart, circles, transverse])
     return HTML(ani.to_jshtml())
 
-#-------------------------------------------------- WIP --------------------------------------------------
-
 def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True,classical=False):
     
     theta = np.linspace(0,2*np.pi,100)
@@ -211,3 +209,60 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
     ani = animation.FuncAnimation(fig, run, frames = time, blit=False, interval=10000/N, repeat=True, fargs = [tstart, xstart, rel_circles, clas_circles])
     return HTML(ani.to_jshtml())
     
+#-------------------------------------------------- WIP --------------------------------------------------
+def lorentz(v):
+        """De=fines the Lorentz transformation as a 2x2 matrix."""
+        gamma=1.0/np.sqrt(1-v*v)
+        return np.array([[gamma,-gamma*v],[-gamma*v,gamma]])
+
+
+def spacetime_plot(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True, classical=False):
+    
+    time=np.linspace(-6,20,100)
+    space=np.linspace(-20,20,100)
+    line1=np.linspace(-20,20,100)
+    line2=np.linspace(20,-20,100)
+    line3=np.zeros(11)
+    line4=np.linspace(0,10,11)
+    
+    fig, ax = plt.subplots(figsize =(10,7))
+    ax.set_xlabel('distance')
+    ax.set_ylabel('time')
+    l1, = ax.plot([], [], lw=1,color='red')
+    l2, = ax.plot([], [], lw=1,color='red')
+    
+    velocities=np.linspace(-0.999,0.999,2001)
+    lines = [np.zeros((len(velocities),2))] * 11
+    for j in range(len(lines)):
+        for ii in range(len(velocities)):
+            vel=velocities[ii]
+            gamma=1.0/np.sqrt(1.0-vel*vel)
+            lines[j][ii] = np.dot(lorentz(vel),np.array([j,0]))
+        plt.plot(lines[j][:,1], lines[j][:,0],linewidth=1,color='black',alpha=0.5)
+    text = plt.text(10,3,'$u$ = {:.2f}c'.format(0), size = 20)
+    l1.set_data(space,line1)
+    l2.set_data(space,line2)
+    ax.set_xlim(-20,20)
+    ax.set_ylim(-2,20)
+    
+    wavefronts = []
+    for i in range(11):
+        wavefronts += plt.plot(np.linspace(0,10),np.linspace(i,i+20), color = 'blue')
+        wavefronts += plt.plot(np.linspace(0,-10),np.linspace(i,i+20), color = 'blue')
+    
+
+    def run(v):
+        for wavefront in wavefronts:
+            xdata,ydata = wavefront.get_data()
+            for ii in range(len(xdata)):
+                point2=np.array([ydata[ii],xdata[ii]])  #remember that time is the first element.
+                print(lorentz(v), v)
+
+                point2=np.dot(lorentz(v),point2)   #dot does matrix multiplication
+                xdata[ii]=point2[1]
+            wavefront.set_data(xdata,ydata)
+            
+    ani = animation.FuncAnimation(fig, run, frames = np.linspace(1,-1,100), blit=False, interval=10000/N, repeat=True)
+    
+    
+    return HTML(ani.to_jshtml())
