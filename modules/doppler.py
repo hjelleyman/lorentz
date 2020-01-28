@@ -173,8 +173,8 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
             clas_circles += plt.plot([],[],'--',color = 'red')
         for jj in range(len(theta)):
             adjusted_tstart[i,jj], adjusted_xstart[i,jj] = np.einsum('jk,k->j', 
-                                                                     lorentz(v*np.cos(theta[jj])/c),
-                                                                     np.array([tstart[i],xstart[i]]))
+                                                                     lorentz(v/c),
+                                                                     np.array([tstart.copy()[i],xstart.copy()[i]]))
     x_now = v_wave*(0-adjusted_tstart)+adjusted_xstart
     
     def run(t, tstart, xstart, rel_circles, clas_circles):
@@ -186,7 +186,7 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
                 
                 x_circle = x_now[i]
                 
-                x = x_circle * np.cos(theta) + adjusted_xstart[i]
+                x = x_circle * np.cos(theta) + adjusted_tstart[i]*v
                 y = x_circle * np.sin(theta)
                 
                 
@@ -202,10 +202,10 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
                 t_observed = (t - tstart[i])
                 d = v_wave * t_observed
 
-                x = d * np.cos(theta) + t_observed*v
+                x = d * np.cos(theta) + tstart[i]*v
                 y = d * np.sin(theta)
 
-                circle.set_data(x,y)
+                circle.set_data(x[d>0],y[d>0])
             
             
     
@@ -286,7 +286,9 @@ def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, c
                 xdata,ydata = initial_data[ii]
                 xdata = xdata.copy()
                 ydata = ydata.copy()
-                xdata
+                xdata[ii] = np.linspace(0,1000,2) + ii * np.cos(angle)
+                ydata[ii] = np.linspace(0,1000/v_wave,2) + ii * np.sin(angle)
+                classical_wavefronts[ii].set_data(xdata,ydata)
             
     ani = animation.FuncAnimation(fig, run, frames = np.linspace(1,-1,N+2)[1:-1], blit=False, interval=10000/N, repeat=True)
     
