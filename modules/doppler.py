@@ -160,38 +160,41 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
     xstart = []
     
     
+    tstart = np.arange(0,N, freq)
+    xstart = np.zeros(len(tstart))
+    
+    adjusted_tstart = np.zeros([len(tstart), len(theta)])
+    adjusted_xstart = np.zeros([len(tstart), len(theta)])
+    
+    for i in range(len(tstart)):
+        if relativistic:
+            rel_circles += plt.plot([],[],'black')
+        if classical:
+            clas_circles += plt.plot([],[],'--',color = 'red')
+        for jj in range(len(theta)):
+            adjusted_tstart[i,jj], adjusted_xstart[i,jj] = np.einsum('jk,k->j', 
+                                                                     lorentz(v*np.cos(theta[jj])/c),
+                                                                     np.array([tstart[i],xstart[i]]))
+    x_now = v_wave*(0-adjusted_tstart)+adjusted_xstart
+    
     def run(t, tstart, xstart, rel_circles, clas_circles):
-        source.set_data(x0[t],y0[t])
-        if t % freq == 0:
-            tstart += [t]
-            xstart += [x0[t]]
-            if relativistic:
-                rel_circles += plt.plot([],[],'black')
-            if classical:
-                clas_circles += plt.plot([],[],'--',color = 'red')
-                
-                
-        if relativistic:    
+        if relativistic:
+            x_now = v_wave*(t-adjusted_tstart)+adjusted_xstart
+            
             for i in range(len(rel_circles)):
                 circle = rel_circles[i]
                 
-                # Beta will vary depending on the angle between the motion of the wave leaving the source and the motion of the source.
-                beta = v/c*np.cos(theta)
-
-                t_source = (t - tstart[i])  # For the source, each wave leaves at an even time period.
-                d_source = v_wave * t_source # Then the wave propergates outwards at a constant velocity (circle).
+                x_circle = x_now[i]
                 
-                # We can use a lorentz transform to work out the time this takes for a stationary observer.
-                t_observer = t_source / np.sqrt(1-beta**2) 
-                # Because the time dilation is different for each angle we need to scale our results so the distance a wavefront travels is the distance it does in a set time period.
-                d_observer = t_observer * d_source / t_source 
+                x = x_circle * np.cos(theta) + adjusted_xstart[i]
+                y = x_circle * np.sin(theta)
                 
-                # Parameterising the expansion of the wave and moving the source of each wavefront.
-                x = d_observer * np.cos(theta) + xstart[i] 
-                y = d_observer * np.sin(theta)
-
+                
+                x = x[t >= adjusted_tstart[i]] 
+                y = y[t >= adjusted_tstart[i]]
                 circle.set_data(x,y)
-        
+            source.set_data(t*v,0)
+                
         if classical:
             for i in range(len(clas_circles)):
                 circle = clas_circles[i]
@@ -199,7 +202,7 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
                 t_observed = (t - tstart[i])
                 d = v_wave * t_observed
 
-                x = d * np.cos(theta) + xstart[i]
+                x = d * np.cos(theta) + t_observed*v
                 y = d * np.sin(theta)
 
                 circle.set_data(x,y)
@@ -214,9 +217,9 @@ def lorentz(v):
         """De=fines the Lorentz transformation as a 2x2 matrix."""
         gamma=1.0/np.sqrt(1-v*v)
         return np.array([[gamma,-gamma*v],[-gamma*v,gamma]])
+        
 
-
-def spacetime_plot(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True, classical=False):
+def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, classical=False):
     
     time=np.linspace(-6,20,100)
     space=np.linspace(-20,20,100)
@@ -245,24 +248,47 @@ def spacetime_plot(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=Tr
     ax.set_xlim(-20,20)
     ax.set_ylim(-2,20)
     
-    wavefronts = []
-    for i in range(11):
-        wavefronts += plt.plot(np.linspace(0,10),np.linspace(i,i+20), color = 'blue')
-        wavefronts += plt.plot(np.linspace(0,-10),np.linspace(i,i+20), color = 'blue')
     
+    v_wave = v_wave/c
+    wavefronts = []
+    initial_data = []
+    classical_wavefronts = []
+    for i in range(11):
+        initial_data += [[np.linspace(0,1000,2),np.linspace(i,i+1000/v_wave,2)], [np.linspace(0,-1000),np.linspace(i,i+1000/v_wave)]]
+    
+    v = 0
+    for data in initial_data:
+        wavefronts += plt.plot(*data, color = 'blue')
+        if classical:
+            classical_wavefronts += plt.plot(*data, '--r')
+        
+    for ii in range(len(initial_data)):
+        xdata,ydata = initial_data[ii]
+        xdata = xdata.copy()
+        ydata = ydata.copy()
+        wavefronts[ii].set_data(xdata,ydata)
 
     def run(v):
-        for wavefront in wavefronts:
-            xdata,ydata = wavefront.get_data()
-            for ii in range(len(xdata)):
-                point2=np.array([ydata[ii],xdata[ii]])  #remember that time is the first element.
-                print(lorentz(v), v)
-
+        for ii in range(len(initial_data)):
+            xdata,ydata = initial_data[ii]
+            xdata = xdata.copy()
+            ydata = ydata.copy()
+            for jj in range(len(xdata)):
+                point2=np.array([ydata[jj],xdata[jj]])  #remember that time is the first element.
                 point2=np.dot(lorentz(v),point2)   #dot does matrix multiplication
-                xdata[ii]=point2[1]
-            wavefront.set_data(xdata,ydata)
+                xdata[jj]=point2[1]
+                ydata[jj]=point2[0]
+            wavefronts[ii].set_data(xdata,ydata)
             
-    ani = animation.FuncAnimation(fig, run, frames = np.linspace(1,-1,100), blit=False, interval=10000/N, repeat=True)
+        text.set_text('$u$ = {:.2f}c'.format(v))
+        if classical:
+            for ii in range(len(initial_data)):
+                xdata,ydata = initial_data[ii]
+                xdata = xdata.copy()
+                ydata = ydata.copy()
+                xdata
+            
+    ani = animation.FuncAnimation(fig, run, frames = np.linspace(1,-1,N+2)[1:-1], blit=False, interval=10000/N, repeat=True)
     
     
     return HTML(ani.to_jshtml())
