@@ -258,27 +258,30 @@ def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, c
     
     v = 0
     for data in initial_data:
-        wavefronts += plt.plot(*data, color = 'blue')
+        if relativistic:
+            wavefronts += plt.plot(*data, color = 'blue')
         if classical:
-            classical_wavefronts += plt.plot(*data, '--r')
+            classical_wavefronts += plt.plot(*data, '-r')
         
-    for ii in range(len(initial_data)):
-        xdata,ydata = initial_data[ii]
-        xdata = xdata.copy()
-        ydata = ydata.copy()
-        wavefronts[ii].set_data(xdata,ydata)
-
-    def run(v):
+    if relativistic:
         for ii in range(len(initial_data)):
             xdata,ydata = initial_data[ii]
             xdata = xdata.copy()
             ydata = ydata.copy()
-            for jj in range(len(xdata)):
-                point2=np.array([ydata[jj],xdata[jj]])  #remember that time is the first element.
-                point2=np.dot(lorentz(v),point2)   #dot does matrix multiplication
-                xdata[jj]=point2[1]
-                ydata[jj]=point2[0]
             wavefronts[ii].set_data(xdata,ydata)
+
+    def run(v):
+        if relativistic:
+            for ii in range(len(initial_data)):
+                xdata,ydata = initial_data[ii]
+                xdata = xdata.copy()
+                ydata = ydata.copy()
+                for jj in range(len(xdata)):
+                    point2=np.array([ydata[jj],xdata[jj]])  #remember that time is the first element.
+                    point2=np.dot(lorentz(v),point2)   #dot does matrix multiplication
+                    xdata[jj]=point2[1]
+                    ydata[jj]=point2[0]
+                wavefronts[ii].set_data(xdata,ydata)
             
         text.set_text('$u$ = {:.2f}c'.format(v))
         if classical:
@@ -286,8 +289,9 @@ def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, c
                 xdata,ydata = initial_data[ii]
                 xdata = xdata.copy()
                 ydata = ydata.copy()
-                xdata[ii] = np.linspace(0,1000,2) + ii * np.cos(angle)
-                ydata[ii] = np.linspace(0,1000/v_wave,2) + ii * np.sin(angle)
+                angle = np.arctan(v)
+                xdata = xdata - ii//2 * v
+                ydata = ydata 
                 classical_wavefronts[ii].set_data(xdata,ydata)
             
     ani = animation.FuncAnimation(fig, run, frames = np.linspace(1,-1,N+2)[1:-1], blit=False, interval=10000/N, repeat=True)
