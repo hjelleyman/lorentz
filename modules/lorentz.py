@@ -221,6 +221,7 @@ def animation_with_hyperbolae():
     def run(u):
         l3.set_data(line6[findnearest(line6.columns, u)], line5[findnearest(line5.columns, u)])
         text.set_text('$u$ = {:.2f}c\n$T$ = {:.2f}$T_0$'.format(u,1/np.sqrt(1-u*u)))
+        reference_delta_T.set_data([7,7], [5, 5-1/np.sqrt(1-u*u)])
         return l3
     
     
@@ -231,6 +232,10 @@ def animation_with_hyperbolae():
     l2, = ax.plot([], [], lw=1,color='red')
     l3, = ax.plot([], [], 'o', color = 'blue')
     l4, = ax.plot([], [], 'o', color = 'green')
+    
+    
+    reference_T_0, = ax.plot([6,6],[4,5],'-o', color = 'green')
+    reference_delta_T, = ax.plot([],[],'-o', color = 'blue')
     
     l1.set_data(space,line1)
     l2.set_data(space,line2)
@@ -277,7 +282,7 @@ def animation_with_hyperbolae():
     plt.plot(ln10[:,1],ln10[:,0],linewidth=1,color='black')
     text = plt.text(10,3,'$u$ = {:.2f}'.format(0.1), size = 20)
     
-    ani = animation.FuncAnimation(fig, run, frames = np.linspace(1,-1,200), blit=False, interval=20, repeat=True)
+    ani = animation.FuncAnimation(fig, run, frames = np.linspace(1,-1,200)[1:], blit=False, interval=50, repeat=True)
     return HTML(ani.to_jshtml())
 
 def lighthouse():
@@ -313,8 +318,8 @@ def animated_lighthouse():
         l1.set_data(space,line1)
         l2.set_data(space,line2)
         l4.set_data(line3, line4)
-        l5.set_data(line3+1, line4)
-        l6.set_data(line3+1, line4)
+        l5.set_data(line3+2, line4)
+        l6.set_data(line3+2, line4)
         ax.set_xlim(-20,20)
         ax.set_ylim(-2,20)
         
@@ -325,11 +330,12 @@ def animated_lighthouse():
         newx = np.zeros(11)
         newy = np.zeros(11)
         for ii in range(len(line3)):
-            point2=np.array([line4[ii],line3[ii]+1])  #remember that time is the first element.
+            point2=np.array([line4[ii],line3[ii]+2])  #remember that time is the first element.
             point2=np.dot(lorentz(u),point2)   #dot does matrix multiplication
             newy[ii]=point2[0]
             newx[ii]=point2[1]
         l6.set_data(newx,newy)
+        changed_d.set_data([10,10 + 2*np.sqrt(1-u*u)],[1,1])
         
         text.set_text('$u$ = {:.2f}c\n$L$ = {:.2f}$L_0$'.format(u,np.sqrt(1-u*u)))
         return l3,l6
@@ -345,6 +351,9 @@ def animated_lighthouse():
     l5, = ax.plot([], [],'o-', color = 'red', alpha = 0.3)
     l6, = ax.plot([], [],'o-', color = 'red')
     
+    refernce_d, = ax.plot([10,12],[2,2],'o-', color = 'blue')
+    changed_d, = ax.plot([10,12],[1,1],'o-', color = 'green')
+    
     velocities=np.linspace(-0.999,0.999,2001)
     lines = [np.zeros((len(velocities),2))] * 11
     for j in range(len(lines)):
@@ -355,7 +364,7 @@ def animated_lighthouse():
         plt.plot(lines[j][:,1], lines[j][:,0],linewidth=1,color='black',alpha=0.5)
     text = plt.text(10,3,'$u$ = {:.2f}'.format(0.1), size = 20, fontname = 'computer modern')
     
-    ani = animation.FuncAnimation(fig, run, np.linspace(1,-1,100), blit=False, interval=20,
+    ani = animation.FuncAnimation(fig, run, np.linspace(1,-1,100), blit=False, interval=50,
                               repeat=True, init_func=init)
     return HTML(ani.to_jshtml())
 
