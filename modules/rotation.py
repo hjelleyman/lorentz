@@ -25,7 +25,7 @@ from IPython.display import HTML
 import pandas as pd
 
 
-from modules.lorentz import lorentz, findnearest
+from modules.lorentz import findnearest
 #------------------------------------------------------------ Implemented --------------------------------------------------
 
 def animate_plot_1():
@@ -35,14 +35,15 @@ def animate_plot_1():
     plt.plot([0,0],[-2,2],'k', alpha = 0.1)
     line, = ax.plot([],[],'r', label = '$[x,y]=[sin(\\theta), cos(\\theta)]$')
     xangle, = ax.plot([],[],'r')
-    text = plt.text(0.14*np.cos(np.pi/4), 0.14*np.sin(np.pi/4),'')
+    text = plt.text(0.14*np.cos(np.pi/4), 0.14*np.sin(np.pi/4),'', size= 15)
+    plt.text(-0.9, 0.95,'L = $\\sqrt{x^2+y^2} = 1$', size= 15)
     
     # x length
     xlength, = plt.plot([], [],'g')
-    xtext = plt.text(0, 0,'x')
+    xtext = plt.text(0, 0,'x', size= 15)
     # y length
     ylength, = plt.plot([], [],'b')
-    ytext = plt.text(0, 0,'y')
+    ytext = plt.text(0, 0,'y', size= 15)
 
     # axis stuff
     plt.axis('off')
@@ -120,12 +121,16 @@ def animate_2_euclidian_vedctors():
         line_2.set_data([0,x2], [0,y2])
         xangle_2.set_data(0.2*np.cos(thetavec2)*(1+0.05*thetavec2), 0.2*np.sin(thetavec2)*(1+0.05*thetavec2))
         text_2.set_text('$\\theta_2 = $'+'{:.2f} radians'.format(theta2))
+        
+        dot_text.set_text('$u_1 \cdot u_2 = x_1x_2 + y_1y_2 ='+' ${:.2f}'.format(x*x2 + y*y2))
+
+        
         return [line_1,text_1,xangle_1, 
                 line_2,text_2,xangle_2]
     
     def animate_changing_delta(del_theta):
         del_theta = del_theta *np.pi/50
-        theta = 0.1
+        theta = 1.2
         theta2 = (theta + del_theta) % (2*np.pi)
         thetavec = np.linspace(0,theta)
         thetavec2 = np.linspace(0,theta2)
@@ -142,6 +147,10 @@ def animate_2_euclidian_vedctors():
         line_2.set_data([0,x2], [0,y2])
         xangle_2.set_data(0.2*np.cos(thetavec2)*(1+0.05*thetavec2), 0.2*np.sin(thetavec2)*(1+0.05*thetavec2))
         text_2.set_text('$\\theta_2 = $'+'{:.2f} radians'.format(theta2))
+        
+        
+        dot_text.set_text('$u_1 \cdot u_2 = x_1x_2 + y_1y_2 ='+' ${:.2f}'.format(x*x2 + y*y2))
+        
         return [line_1,text_1,xangle_1, 
                 line_2,text_2,xangle_2]
     
@@ -150,12 +159,14 @@ def animate_2_euclidian_vedctors():
     plt.plot([0,0],[-2,2],'k', alpha = 0.1)
     line_1, = ax.plot([],[],'r', label = '$[x,y]=[sin(\\theta_1), cos(\\theta_1)]$')
     xangle_1, = ax.plot([],[],'r')
-    text_1 = plt.text(0.13*np.cos(np.pi/4), 0.1*np.sin(np.pi/4),'')
+    text_1 = plt.text(0.15*np.cos(np.pi/4), 0.05*np.sin(np.pi/4),'', size= 15)
     
     line_2, = ax.plot([],[],'b', label = '$[x,y]=[sin(\\theta_2), cos(\\theta_2)]$')
     xangle_2, = ax.plot([],[],'b')
-    text_2 = plt.text(0.23*np.cos(np.pi/4), 0.23*np.sin(np.pi/4),'')
-
+    text_2 = plt.text(0.23*np.cos(np.pi/4), 0.23*np.sin(np.pi/4),'', size= 15)
+    
+    dot_text = plt.text(-1.0, 1.0,'', size= 15)
+    
     # axis stuff
     plt.axis('off')
     plt.xlim([-1.1,1.1])
@@ -188,18 +199,24 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
         ax.set_xlim(-20,20)
         ax.set_ylim(-2,20)
         
-    def run(u):
-        u2 = u + udelta
+    def run(u, udelta):
+        c = 3e8
+        u = u*c
+        udelta = udelta*c
         
-        x1, t1 = np.dot(lorentz(u),vec1)
-        x2, t2 = np.dot(lorentz(u2),vec2)
+        u2 = (u + udelta) / (1- (u*udelta)/c**2)
+        
+        u = u
+        u2 = u2
+        
+        
+        x1, t1 = np.dot(lorentz2(u),vec1)
+        x2, t2 = np.dot(lorentz2(u2),vec2)
         
         l3.set_data([0,x1],[0,t1])
         l4.set_data([0,x2],[0,t2])
         
-        c = 3e8
-        
-        text.set_text('$u_1$ = {:.2f}c\n$u_2$ = {:.2f}c\n$A\\cdot B$ = {:.2f}'.format(u,u2,(t2*t1)-(x2*x1)))
+        text.set_text('$u_1$ = {:.2f}c\n$u_2$ = {:.2f}c\n$A\\cdot B$ = {:.2f}'.format(u/c,u2/c,-c**2*(t2-t1)**2+(x2-x1)**2))
     
     
     fig, ax = plt.subplots(figsize =(10,7))
@@ -223,9 +240,19 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
     l4, = ax.plot([], [], '-o', lw=3, color = 'green')
     
     ani = animation.FuncAnimation(fig, run, datagen, blit=False, interval=100,
-                              repeat=True, init_func=init)
+                              repeat=True, init_func=init, fargs = [udelta])
     return HTML(ani.to_jshtml())
 
+def lorentz(v):
+    """De=fines the Lorentz transformation as a 2x2 matrix."""
+    gamma=1.0/np.sqrt(1-v*v)
+    return np.array([[gamma,-gamma*v],[-gamma*v,gamma]])
+
+def lorentz2(v):
+    """De=fines the Lorentz transformation as a 2x2 matrix."""
+    c=3e8
+    gamma=1.0/np.sqrt(1-v*v/3e8)
+    return np.array([[gamma,-gamma*v],[-gamma*v,gamma]])
 
 #------------------------------------------------------------ WIP ----------------------------------------------------------
 
