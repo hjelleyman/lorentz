@@ -143,6 +143,7 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
     
     theta = np.linspace(0,2*np.pi,100)
     time = np.arange(N)
+    xkcd = list(mcd.XKCD_COLORS.values())
 
     fig, ax = plt.subplots(figsize = (10,10))
     # axis stuff
@@ -168,9 +169,9 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
     
     for i in range(len(tstart)):
         if relativistic:
-            rel_circles += plt.plot([],[],'black')
+            rel_circles += plt.plot([],[],color = 'blue')
         if classical:
-            clas_circles += plt.plot([],[],'--',color = 'red')
+            clas_circles += plt.plot([],[],'--', color = 'red')
         for jj in range(len(theta)):
             adjusted_tstart[i,jj], adjusted_xstart[i,jj] = np.einsum('jk,k->j', 
                                                                      lorentz(v/c),
@@ -193,7 +194,7 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
                 x = x[t >= adjusted_tstart[i]] 
                 y = y[t >= adjusted_tstart[i]]
                 circle.set_data(x,y)
-            source.set_data(t*v,0)
+        source.set_data(t*v,0)
                 
         if classical:
             for i in range(len(clas_circles)):
@@ -219,7 +220,7 @@ def lorentz(v):
         
 
 def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, classical=True):
-    
+    xkcd = list(mcd.XKCD_COLORS.values())
     time=np.linspace(-6,20,100)
     space=np.linspace(-20,20,100)
     line1=np.linspace(-20,20,100)
@@ -277,11 +278,13 @@ def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, c
         initial_data += [[np.linspace(0,1000,2),np.linspace(i,i+1000/v_wave,2)], [np.linspace(0,-1000),np.linspace(i,i+1000/v_wave)]]
     
     v = 0
+    i = 0
     for data in initial_data:
         if relativistic:
-            wavefronts += AX[0].plot(*data, color = 'blue')
+            wavefronts += AX[0].plot(*data, color = 'red')
         if classical:
             classical_wavefronts += AX[-1].plot(*data, color = 'blue')
+        i += 1
         
     if relativistic:
         ax = AX[0]
@@ -328,7 +331,10 @@ def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, c
 import mpl_toolkits.mplot3d.axes3d as p3
 import pandas as pd
 
-def transition_plot(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=False,classical=True):
+import matplotlib._color_data as mcd
+import matplotlib.patches as mpatch
+
+def _transition_plot(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=False,classical=True):
     theta = np.linspace(0,2*np.pi,100)
     time = np.arange(N)
 
@@ -345,7 +351,7 @@ def transition_plot(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=F
     
     ax.plot(time*v,0*time,time, '-', color = 'black')
     
-    source, = ax.plot([0],[0],[0], 'o', color = 'black', markersize = 10)
+#     source, = ax.plot([0],[0],[0], 'o', color = 'black', markersize = 10)
     
     x0 = np.linspace(-v*N*1/2,v*N*1/2,N)
     y0 = np.zeros(N)
@@ -365,88 +371,35 @@ def transition_plot(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=F
     adjusted_xstart = np.zeros([len(tstart), len(theta)])
     
     for i in range(len(tstart)):
-        if relativistic:
-            rel_circles += ax.plot([],[],[],'black')
-            rel_spacetime += ax.plot([],[],[],'black')
-            rel_spacetime += ax.plot([],[],[],'black')
-        if classical:
-            clas_circles += ax.plot([],[],[],'-',color = 'black')
-            clas_spacetime += ax.plot([],[],[],'blue')
-            clas_spacetime += ax.plot([],[],[],'blue')
-            
-            
         for jj in range(len(theta)):
             adjusted_tstart[i,jj], adjusted_xstart[i,jj] = np.einsum('jk,k->j', 
                                                                      lorentz(v/c),
                                                                      np.array([tstart.copy()[i],xstart.copy()[i]]))
     x_now = v_wave*(0-adjusted_tstart)+adjusted_xstart
     
-    def run(t, tstart, xstart, rel_circles, clas_circles, clas_spacetime):
-#         if relativistic:
-#             x_now = v_wave*(t-adjusted_tstart)+adjusted_xstart
-            
-#             for i in range(len(rel_circles)):
-#                 circle = rel_circles[i]
+    circle_dicts = {}
+    
+    xkcd = list(mcd.XKCD_COLORS.values())
+    
+    for t in time[::1]:
+        for i in range(len(tstart)):
+            t_observed = (t - tstart[i])
+            if t_observed > 0:
                 
-#                 x_circle = x_now[i]
-                
-#                 x = x_circle * np.cos(theta) + adjusted_tstart[i]*v
-#                 y = x_circle * np.sin(theta)
-                
-                
-#                 x = x[t >= adjusted_tstart[i]] 
-#                 y = y[t >= adjusted_tstart[i]]
-#                 circle.set_data(x,y)
-                
-        source.set_data(t*v,0)
-        source.set_3d_properties(t)
-                
-        if classical:
-            print(t)
-            for i in range(len(clas_circles)):
-                circle = clas_circles[i]
-                
-                t_observed = (t - tstart[i])
                 d = v_wave * t_observed
 
-                x = circle_dicts[t][i]['x'][d>0]
-                y = circle_dicts[t][i]['y'][d>0]
-                z = circle_dicts[t][i]['z']
+                x = d * np.cos(theta) + tstart[i]*v
+                y = d * np.sin(theta)
 
-                circle.set_data(x,y)
-                if len(x)>0:
-                    circle.set_3d_properties(zs=z)
-                
+                z = np.array([t])
+
+                ax.plot(x,y,z, color = xkcd[i], alpha = 0.5)
+
                 xref = np.linspace(d, 0)
                 yref = np.linspace(0,-d)*1.2
                 xref = xref[d>0]
                 yref = yref[d>0]
-                
-                clas_spacetime[i*2].set_data(xref+tstart[i]*v,yref)
-                clas_spacetime[i*2+1].set_data(-xref+tstart[i]*v,yref)
-            
-    circle_dicts = {}
-    for t in time:
-        circle_dicts[t] = {}
-        for i in range(len(clas_circles)):
-            circle_dicts[t][i] = {}
-            
-            t_observed = (t - tstart[i])
-            d = v_wave * t_observed
 
-            x = d * np.cos(theta) + tstart[i]*v
-            y = d * np.sin(theta)
-            
-            circle_dicts[t][i]['x'] = x
-            circle_dicts[t][i]['y'] = y 
-                
-            z = np.array([t])
-                
-            _,_,z = np.meshgrid(x[d>0],y[d>0],z)
-            
-            circle_dicts[t][i]['z'] = z
-            
-                
-    
-    ani = animation.FuncAnimation(fig, run, frames = time, blit=False, interval=10000/N, repeat=True, fargs = [tstart, xstart, rel_circles, clas_circles, clas_spacetime])
-    return HTML(ani.to_jshtml())
+#                 ax.plot(xref+tstart[i]*v,yref,[t])
+#                 ax.plot(-xref+tstart[i]*v,yref,[t])
+    plt.show()
