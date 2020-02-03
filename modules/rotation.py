@@ -198,25 +198,23 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
         l2.set_data(space, line2)
         ax.set_xlim(-20,20)
         ax.set_ylim(-2,20)
+    values = []
+    
+    def run(u, udelta, values):
+        c = 1
+#         u = u*c
+#         udelta = udelta*c
+        u2 = (u + udelta) / (1 + (u*udelta)/c**2)
+#         u2 = u + udelta
         
-    def run(u, udelta):
-        c = 3e8
-        u = u*c
-        udelta = udelta*c
+        x1, t1 = np.dot(vec1, lorentz(u))
+        x2, t2 = np.dot(vec2, lorentz(u2))
         
-        u2 = (u + udelta) / (1- (u*udelta)/c**2)
-        
-        u = u
-        u2 = u2
-        
-        
-        x1, t1 = np.dot(lorentz2(u),vec1)
-        x2, t2 = np.dot(lorentz2(u2),vec2)
+        values.append(x1*x2-t1*t2)
         
         l3.set_data([0,x1],[0,t1])
         l4.set_data([0,x2],[0,t2])
-        
-        text.set_text('$u_1$ = {:.2f}c\n$u_2$ = {:.2f}c\n$A\\cdot B$ = {:.2f}'.format(u/c,u2/c,-c**2*(t2-t1)**2+(x2-x1)**2))
+        text.set_text('$u_1$ = {:.2f}c\n$u_2$ = {:.2f}c\n$A\\cdot B$ = {:.2f}'.format(u/c,u2/c, x1*x2-t1*t2))
     
     
     fig, ax = plt.subplots(figsize =(10,7))
@@ -240,12 +238,12 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
     l4, = ax.plot([], [], '-o', lw=3, color = 'green')
     
     ani = animation.FuncAnimation(fig, run, datagen, blit=False, interval=100,
-                              repeat=True, init_func=init, fargs = [udelta])
+                              repeat=True, init_func=init, fargs = [udelta, values])
     return HTML(ani.to_jshtml())
 
 def lorentz(v):
     """De=fines the Lorentz transformation as a 2x2 matrix."""
-    gamma=1.0/np.sqrt(1-v*v)
+    gamma=1.0/np.sqrt(1-v**2)
     return np.array([[gamma,-gamma*v],[-gamma*v,gamma]])
 
 def lorentz2(v):
