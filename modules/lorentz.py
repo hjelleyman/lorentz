@@ -40,6 +40,10 @@ Functions:
 import numpy as np
 import matplotlib.pyplot as plt
 from ipywidgets import interactive, FloatSlider
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from IPython.display import HTML
 import pandas as pd
 
 from numpy import genfromtxt
@@ -161,8 +165,6 @@ def plot_lighthouse_transform():
     plt.title('Flashing lighthouse at the origin - moving observer')
     plt.show()
     
-import matplotlib.animation as animation
-from IPython.display import HTML
 
 def animation_lorentz_1():
     """Creates an animation showing how regularly spaced events move through space for a moving observer."""

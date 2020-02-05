@@ -24,7 +24,6 @@ import matplotlib.animation as animation
 from IPython.display import HTML
 import pandas as pd
 
-
 from modules.lorentz import findnearest
 #------------------------------------------------------------ Implemented --------------------------------------------------
 
@@ -36,41 +35,26 @@ def animate_plot_1():
     line, = ax.plot([],[],'r', label = '$[x,y]=[sin(\\theta), cos(\\theta)]$')
     xangle, = ax.plot([],[],'r')
     text = plt.text(0.14*np.cos(np.pi/4), 0.14*np.sin(np.pi/4),'', size= 15)
-    plt.text(-0.9, 0.95,'L = $\\sqrt{x^2+y^2} = 1$', size= 15)
+    length = plt.text(-1.45, 1.2,'L = $\\sqrt{x^2+y^2} = 1$', size= 15)
     
     # x length
-    xlength, = plt.plot([], [],'g')
+    xlength, = plt.plot([], [],'--r')
     xtext = plt.text(0, 0,'x', size= 15)
     # y length
-    ylength, = plt.plot([], [],'b')
+    ylength, = plt.plot([], [],'-.r')
     ytext = plt.text(0, 0,'y', size= 15)
 
     # axis stuff
     plt.axis('off')
-    plt.xlim([-1.1,1.1])
-    plt.ylim([-1.1,1.1])
+    plt.xlim([-1.5,1.5])
+    plt.ylim([-1.5,1.5])
     
-    def init():
-        line.set_data([], [])
-        xangle.set_data([],[])
-        text.set_text('')
-        xlength.set_data([],[])
-        xlength.set_label('')
-        xtext.set_position([0,0])
-        xtext.set_text('')
-        ylength.set_data([],[])
-        ylength.set_label('')
-        ytext.set_position([0,0])
-        ytext.set_text('')
-        return [line,text,xangle,xlength,xtext,ylength,ytext]
     
     def animate(theta):
         theta = theta *np.pi/50
         thetavec = np.linspace(0,theta)
         x = np.cos(theta)
         y = np.sin(theta)
-#         plt.legend(loc='center left', bbox_to_anchor= (1.0, 0.5), ncol=1, borderaxespad=0.5, frameon=False)
-
         line.set_data([0,x], [0,y])
         xangle.set_data(0.1*np.cos(thetavec), 0.1*np.sin(thetavec))
         text.set_text('$\\theta = $'+'{:.2f} radians'.format(theta))
@@ -82,26 +66,17 @@ def animate_plot_1():
         ylength.set_label('y = {:.02f}'.format(y))
         ytext.set_position((x+0.05, y/2))
         ytext.set_text('y = {:.2f}'.format(y))
+        
+        length.set_text(f'$L=\\sqrt{{x^2+y^2}}$\n  $=\\sqrt{{({x:.2f})^2+({y:.2f})^2}}$\n  $={np.sqrt(x**2+y**2):.2f}$')
         return [line,text,xangle,xlength,xtext,ylength,ytext]
 
     
-    ani = animation.FuncAnimation(fig, animate, init_func=init,
+    ani = animation.FuncAnimation(fig, animate,
                                    frames=100, interval=100, blit=True)
     return HTML(ani.to_jshtml())
     
 def animate_2_euclidian_vedctors():
     """ Creates two animations showing two rotating vectors in Euclidian spacetime."""
-    def init():
-        line_1.set_data([], [])
-        xangle_1.set_data([],[])
-        text_1.set_text('')
-        
-        line_2.set_data([], [])
-        xangle_2.set_data([],[])
-        text_2.set_text('')
-        return [line_1,text_1,xangle_1, 
-                line_2,text_2,xangle_2]
-    
     def animate_constant_delta(theta):
         theta = theta *np.pi/50
         del_theta = 0.6
@@ -112,21 +87,37 @@ def animate_2_euclidian_vedctors():
         y = np.sin(theta)
         x2 = np.cos(theta2)
         y2 = np.sin(theta2)
-#         plt.legend(loc='center left', bbox_to_anchor= (1.0, 0.5), ncol=1, borderaxespad=0.5, frameon=False)
 
         line_1.set_data([0,x], [0,y])
         xangle_1.set_data(0.1*np.cos(thetavec), 0.1*np.sin(thetavec))
-        text_1.set_text('$\\theta_1 = $'+'{:.2f} radians'.format(theta))
+        line_1.set_label('$\\theta_1 = $'+'{:.2f} radians'.format(theta))
         
         line_2.set_data([0,x2], [0,y2])
         xangle_2.set_data(0.2*np.cos(thetavec2)*(1+0.05*thetavec2), 0.2*np.sin(thetavec2)*(1+0.05*thetavec2))
-        text_2.set_text('$\\theta_2 = $'+'{:.2f} radians'.format(theta2))
+        line_2.set_label('$\\theta_2 = $'+'{:.2f} radians'.format(theta2))
         
-        dot_text.set_text('$u_1 \cdot u_2 = x_1x_2 + y_1y_2 ='+' ${:.2f}'.format(x*x2 + y*y2))
-
+        dot_text.set_text(f'$u_1 \cdot u_2 = x_1x_2 + y_1y_2 $\n         $= ({x:.2f})({x2:.2f}) + ({y:.2f})({y2:.2f})$\n         $= {x*x2 + y*y2:.2f}$')
         
-        return [line_1,text_1,xangle_1, 
-                line_2,text_2,xangle_2]
+        xlength1.set_data([0,x], [y,y])
+        xlength1.set_label(f'$x_1={x:.2f}$')
+        xtext1.set_position((x/2, y+0.05))
+        ylength1.set_data([x,x], [0,y])
+        ylength1.set_label(f'$y_1={y:.2f}$')
+        ytext1.set_position((x+0.05, y/2))
+        
+        xlength2.set_data([0,x2], [y2,y2])
+        xlength2.set_label(f'$x_2={x2:.2f}$')
+        xtext2.set_position((x2/2, y2+0.05))
+        ylength2.set_data([x2,x2], [0,y2])
+        ylength2.set_label(f'$y_2={y2:.2f}$')
+        ytext2.set_position((x2+0.05, y2/2))
+        
+        
+        ax.legend()
+        
+        
+        return [line_1,xangle_1, 
+                line_2,xangle_2]
     
     def animate_changing_delta(del_theta):
         del_theta = del_theta *np.pi/50
@@ -138,43 +129,71 @@ def animate_2_euclidian_vedctors():
         y = np.sin(theta)
         x2 = np.cos(theta2)
         y2 = np.sin(theta2)
-#         plt.legend(loc='center left', bbox_to_anchor= (1.0, 0.5), ncol=1, borderaxespad=0.5, frameon=False)
 
         line_1.set_data([0,x], [0,y])
         xangle_1.set_data(0.1*np.cos(thetavec), 0.1*np.sin(thetavec))
-        text_1.set_text('$\\theta_1 = $'+'{:.2f} radians'.format(theta))
+        line_1.set_label('$\\theta_1 = $'+'{:.2f} radians'.format(theta))
         
         line_2.set_data([0,x2], [0,y2])
         xangle_2.set_data(0.2*np.cos(thetavec2)*(1+0.05*thetavec2), 0.2*np.sin(thetavec2)*(1+0.05*thetavec2))
-        text_2.set_text('$\\theta_2 = $'+'{:.2f} radians'.format(theta2))
+        line_2.set_label('$\\theta_2 = $'+'{:.2f} radians'.format(theta2))
         
+        xlength1.set_data([0,x], [y,y])
+        xlength1.set_label(f'$x_1={x:.2f}$')
+        xtext1.set_position((x/2, y+0.05))
+        ylength1.set_data([x,x], [0,y])
+        ylength1.set_label(f'$y_1={y:.2f}$')
+        ytext1.set_position((x+0.05, y/2))
         
-        dot_text.set_text('$u_1 \cdot u_2 = x_1x_2 + y_1y_2 ='+' ${:.2f}'.format(x*x2 + y*y2))
+        xlength2.set_data([0,x2], [y2,y2])
+        xlength2.set_label(f'$x_2={x2:.2f}$')
+        xtext2.set_position((x2/2, y2+0.05))
+        ylength2.set_data([x2,x2], [0,y2])
+        ylength2.set_label(f'$y_2={y2:.2f}$')
+        ytext2.set_position((x2+0.05, y2/2))
         
-        return [line_1,text_1,xangle_1, 
-                line_2,text_2,xangle_2]
+        ax.legend()
+
+        dot_text.set_text(f'$u_1 \cdot u_2 = x_1x_2 + y_1y_2 $\n         $= ({x:.2f})({x2:.2f}) + ({y:.2f})({y2:.2f})$\n         $= {x*x2 + y*y2:.2f}$')
+        
+        return [line_1,xangle_1, 
+                line_2,xangle_2]
     
     fig, ax = plt.subplots(figsize=(10,10))
     plt.plot([-2,2],[0,0],'k', alpha = 0.1)
     plt.plot([0,0],[-2,2],'k', alpha = 0.1)
     line_1, = ax.plot([],[],'r', label = '$[x,y]=[sin(\\theta_1), cos(\\theta_1)]$')
     xangle_1, = ax.plot([],[],'r')
-    text_1 = plt.text(0.15*np.cos(np.pi/4), 0.05*np.sin(np.pi/4),'', size= 15)
+#     text_1 = plt.text(0.15*np.cos(np.pi/4), 0.05*np.sin(np.pi/4),'', size= 10)
     
     line_2, = ax.plot([],[],'b', label = '$[x,y]=[sin(\\theta_2), cos(\\theta_2)]$')
     xangle_2, = ax.plot([],[],'b')
-    text_2 = plt.text(0.23*np.cos(np.pi/4), 0.23*np.sin(np.pi/4),'', size= 15)
+#     text_2 = plt.text(0.23*np.cos(np.pi/4), 0.23*np.sin(np.pi/4),'', size= 10)
     
-    dot_text = plt.text(-1.0, 1.0,'', size= 15)
+    dot_text = plt.text(-1.45, 1.2,'', size= 15)
+    
+    # x length
+    xlength1, = ax.plot([], [],'--r')
+    xtext1 = ax.text(0, 0,'$x_1$', size= 15)
+    # y length
+    ylength1, = ax.plot([], [],'-.r')
+    ytext1 = ax.text(0, 0,'$y_1$', size= 15)
+    
+    # x length
+    xlength2, = ax.plot([], [],'--b')
+    xtext2 = ax.text(0, 0,'$x_2$', size= 15)
+    # y length
+    ylength2, = ax.plot([], [],'-.b')
+    ytext2 = ax.text(0, 0,'$y_2$', size= 15)
     
     # axis stuff
     plt.axis('off')
-    plt.xlim([-1.1,1.1])
-    plt.ylim([-1.1,1.1])
+    plt.xlim([-1.5,1.5])
+    plt.ylim([-1.5,1.5])
     
-    ani_constant_delta = animation.FuncAnimation(fig, animate_constant_delta, init_func=init,
+    ani_constant_delta = animation.FuncAnimation(fig, animate_constant_delta,
                                    frames=100, interval=100, blit=True)
-    ani_changing_delta = animation.FuncAnimation(fig, animate_changing_delta, init_func=init,
+    ani_changing_delta = animation.FuncAnimation(fig, animate_changing_delta,
                                    frames=100, interval=100, blit=True)
     return (HTML(ani_constant_delta.to_jshtml()), HTML(ani_changing_delta.to_jshtml()))
 
@@ -188,7 +207,7 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
     line5 = pd.read_hdf('data/lz_line5.hdf', 'line5')
     line6 = pd.read_hdf('data/lz_line6.hdf', 'line6')
     
-    def datagen(u=0.75):
+    def datagen(u=1):
         while u > -1:
             u -= 0.05
             yield u
@@ -214,7 +233,13 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
         
         l3.set_data([0,x1],[0,t1])
         l4.set_data([0,x2],[0,t2])
-        text.set_text('$u_1$ = {:.2f}c\n$u_2$ = {:.2f}c\n$A\\cdot B$ = {:.2f}'.format(u/c,u2/c, x1*x2-t1*t2))
+        
+        l3.set_label(f'$\mathbf{{x_1}} = [{x1:.2f}, {t1:.2f}]$')
+        l4.set_label(f'$\mathbf{{x_2}} = [{x2:.2f}, {t2:.2f}]$')
+        text.set_text(f'$u = {u:.2f}$')
+        equation.set_text(f'$\mathbf{{x_1\cdot x_2}}=x_1x_2-t_1t_2$\n          $= ({x1:.2f})({x2:.2f}) - ({t1:.2f})({t2:.2f})$\n          $= {x1*x2 - t1*t2:.2f}$')
+        
+        ax.legend(prop={"size": 15})
     
     
     fig, ax = plt.subplots(figsize =(10,7))
@@ -231,7 +256,8 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
         plt.plot(lines[j][:,1], lines[j][:,0],linewidth=1,color='black',alpha=0.5)
         
         
-    text = plt.text(10,3,'$u$ = {:.2f}'.format(0.1), size = 20)
+    text = plt.text(-17,5,'$u$ = {:.2f}'.format(0.1), size = 15)
+    equation = plt.text(-12,15,'',size = 15)
     l1, = ax.plot([], [], lw=1,color='red')
     l2, = ax.plot([], [], lw=1,color='red')
     l3, = ax.plot([], [], '-o', lw=3, color = 'blue')
