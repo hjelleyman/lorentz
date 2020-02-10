@@ -207,6 +207,9 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
     line5 = pd.read_hdf('data/lz_line5.hdf', 'line5')
     line6 = pd.read_hdf('data/lz_line6.hdf', 'line6')
     
+    vec10 = vec1.copy()
+    vec20 = vec2.copy()
+    
     def datagen(u=1):
         while u > -1:
             u -= 0.05
@@ -234,15 +237,17 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
         l3.set_data([0,x1],[0,t1])
         l4.set_data([0,x2],[0,t2])
         
-        l3.set_label(f'$\mathbf{{x_1}} = [{x1:.2f}, {t1:.2f}]$')
-        l4.set_label(f'$\mathbf{{x_2}} = [{x2:.2f}, {t2:.2f}]$')
-        text.set_text(f'$u = {u:.2f}$')
-        equation.set_text(f'$\mathbf{{x_1\cdot x_2}}=x_1x_2-t_1t_2$\n          $= ({x1:.2f})({x2:.2f}) - ({t1:.2f})({t2:.2f})$\n          $= {x1*x2 - t1*t2:.2f}$')
+        l3.set_label(f'$\mathbf{{x_1^u}} = [{x1:.2f}, {t1:.2f}]$')
+        l4.set_label(f'$\mathbf{{x_2^u}} = [{x2:.2f}, {t2:.2f}]$')
+        text.set_text(f'$\mathbf{{x_1^0}} = [{vec10[0]:.2f}, {vec10[1]:.2f}]$\n$\mathbf{{x_2^0}} = [{vec20[0]:.2f}, {vec20[1]:.2f}]$')
+        equation.set_text(f'$\mathbf{{x_1^u\cdot x_2^u}}=x_1^ux_2^u-t_1^ut_2^u$\n          $= ({x1:.2f})({x2:.2f}) - ({t1:.2f})({t2:.2f})$\n          $= {x1*x2 - t1*t2:.2f}$')
         
-        ax.legend(prop={"size": 15})
+        legend = ax.legend(prop={"size": 15},title = f'$\mathbf{{u = {u:.2f}}}$', title_fontsize = 15)
+        legend._legend_box.align = "left"
+        
     
     
-    fig, ax = plt.subplots(figsize =(10,7))
+    fig, ax = plt.subplots(1,1, figsize =(10,7))
     ax.set_xlabel('distance')
     ax.set_ylabel('time')
     
@@ -253,11 +258,11 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
             vel=velocities[ii]
             gamma=1.0/np.sqrt(1.0-vel*vel)
             lines[j][ii] = np.dot(lorentz(vel),np.array([j,0]))
-        plt.plot(lines[j][:,1], lines[j][:,0],linewidth=1,color='black',alpha=0.5)
+        ax.plot(lines[j][:,1], lines[j][:,0],linewidth=1,color='black',alpha=0.5)
         
         
-    text = plt.text(-17,5,'$u$ = {:.2f}'.format(0.1), size = 15)
-    equation = plt.text(-12,15,'',size = 15)
+    text = ax.text(-19,4,'$u$ = {:.2f}'.format(0.1), size = 15)
+    equation = ax.text(-12,15,'',size = 15)
     l1, = ax.plot([], [], lw=1,color='red')
     l2, = ax.plot([], [], lw=1,color='red')
     l3, = ax.plot([], [], '-o', lw=3, color = 'blue')
