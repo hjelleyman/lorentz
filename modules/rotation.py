@@ -29,18 +29,25 @@ from modules.lorentz import findnearest
 
 def animate_plot_1():
     """Creates an animation of a vector rotating in Euclidian Space."""
+    
+    # Create the figure and axis.
     fig, ax = plt.subplots(figsize=(10,10))
+    
+    # Plot axis lines for aesthetic.
     plt.plot([-2,2],[0,0],'k', alpha = 0.1)
     plt.plot([0,0],[-2,2],'k', alpha = 0.1)
+    
+    # Plot the line which we will rotate and add descriptive text.
     line, = ax.plot([],[],'r', label = '$[x,y]=[sin(\\theta), cos(\\theta)]$')
     xangle, = ax.plot([],[],'r')
     text = plt.text(0.14*np.cos(np.pi/4), 0.14*np.sin(np.pi/4),'', size= 15)
     length = plt.text(-1.45, 1.2,'L = $\\sqrt{x^2+y^2} = 1$', size= 15)
     
-    # x length
+    # length of the x component.
     xlength, = plt.plot([], [],'--r')
     xtext = plt.text(0, 0,'x', size= 15)
-    # y length
+    
+    # length of the y component.
     ylength, = plt.plot([], [],'-.r')
     ytext = plt.text(0, 0,'y', size= 15)
 
@@ -51,10 +58,16 @@ def animate_plot_1():
     
     
     def animate(theta):
+        """The animation function for this image."""
+        # normalising theta.
         theta = theta *np.pi/50
         thetavec = np.linspace(0,theta)
+        
+        # x and y coordinates of the end of the vector.
         x = np.cos(theta)
         y = np.sin(theta)
+        
+        # Update the components of the plot.
         line.set_data([0,x], [0,y])
         xangle.set_data(0.1*np.cos(thetavec), 0.1*np.sin(thetavec))
         text.set_text('$\\theta = $'+'{:.2f} radians'.format(theta))
@@ -66,17 +79,17 @@ def animate_plot_1():
         ylength.set_label('y = {:.02f}'.format(y))
         ytext.set_position((x+0.05, y/2))
         ytext.set_text('y = {:.2f}'.format(y))
-        
         length.set_text(f'$L=\\sqrt{{x^2+y^2}}$\n  $=\\sqrt{{({x:.2f})^2+({y:.2f})^2}}$\n  $={np.sqrt(x**2+y**2):.2f}$')
-        return [line,text,xangle,xlength,xtext,ylength,ytext]
 
+    # Generate the animation.
+    ani = animation.FuncAnimation(fig, animate, frames=100, interval=100, blit=True)
     
-    ani = animation.FuncAnimation(fig, animate,
-                                   frames=100, interval=100, blit=True)
+    # Return the animation as a javasript HTML applet.
     return HTML(ani.to_jshtml())
     
 def animate_2_euclidian_vedctors():
     """ Creates two animations showing two rotating vectors in Euclidian spacetime."""
+    
     def animate_constant_delta(theta):
         theta = theta *np.pi/50
         del_theta = 0.6
@@ -112,12 +125,7 @@ def animate_2_euclidian_vedctors():
         ylength2.set_label(f'$y_2={y2:.2f}$')
         ytext2.set_position((x2+0.05, y2/2))
         
-        
         ax.legend()
-        
-        
-        return [line_1,xangle_1, 
-                line_2,xangle_2]
     
     def animate_changing_delta(del_theta):
         del_theta = del_theta *np.pi/50
@@ -155,20 +163,15 @@ def animate_2_euclidian_vedctors():
         ax.legend()
 
         dot_text.set_text(f'$u_1 \cdot u_2 = x_1x_2 + y_1y_2 $\n         $= ({x:.2f})({x2:.2f}) + ({y:.2f})({y2:.2f})$\n         $= {x*x2 + y*y2:.2f}$')
-        
-        return [line_1,xangle_1, 
-                line_2,xangle_2]
     
     fig, ax = plt.subplots(figsize=(10,10))
     plt.plot([-2,2],[0,0],'k', alpha = 0.1)
     plt.plot([0,0],[-2,2],'k', alpha = 0.1)
     line_1, = ax.plot([],[],'r', label = '$[x,y]=[sin(\\theta_1), cos(\\theta_1)]$')
     xangle_1, = ax.plot([],[],'r')
-#     text_1 = plt.text(0.15*np.cos(np.pi/4), 0.05*np.sin(np.pi/4),'', size= 10)
     
     line_2, = ax.plot([],[],'b', label = '$[x,y]=[sin(\\theta_2), cos(\\theta_2)]$')
     xangle_2, = ax.plot([],[],'b')
-#     text_2 = plt.text(0.23*np.cos(np.pi/4), 0.23*np.sin(np.pi/4),'', size= 10)
     
     dot_text = plt.text(-1.45, 1.2,'', size= 15)
     
@@ -191,15 +194,15 @@ def animate_2_euclidian_vedctors():
     plt.xlim([-1.5,1.5])
     plt.ylim([-1.5,1.5])
     
-    ani_constant_delta = animation.FuncAnimation(fig, animate_constant_delta,
-                                   frames=100, interval=100, blit=True)
-    ani_changing_delta = animation.FuncAnimation(fig, animate_changing_delta,
-                                   frames=100, interval=100, blit=True)
+    ani_constant_delta = animation.FuncAnimation(fig, animate_constant_delta, frames=100, interval=100)
+    ani_changing_delta = animation.FuncAnimation(fig, animate_changing_delta, frames=100, interval=100)
     return (HTML(ani_constant_delta.to_jshtml()), HTML(ani_changing_delta.to_jshtml()))
+
 
 
 def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
     """Creates an animation showing how regularly spaced events move through space for a moving observer with hyperbolae."""
+    
     time=np.linspace(-6,20,100)
     space=np.linspace(-20,20,100)
     line1=np.linspace(-20,20,100)
@@ -211,6 +214,7 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
     vec20 = vec2.copy()
     
     def datagen(u=1):
+        """This is a generator which generates the inputs to the run function over the animation."""
         while u > -1:
             u -= 0.05
             yield u
@@ -268,17 +272,22 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
     l3, = ax.plot([], [], '-o', lw=3, color = 'blue')
     l4, = ax.plot([], [], '-o', lw=3, color = 'green')
     
+    l1.set_data(space, line1)
+    l2.set_data(space, line2)
+    ax.set_xlim(-20,20)
+    ax.set_ylim(-2,20)
+    
     ani = animation.FuncAnimation(fig, run, datagen, blit=False, interval=100,
                               repeat=True, init_func=init, fargs = [udelta, values])
     return HTML(ani.to_jshtml())
 
 def lorentz(v):
-    """De=fines the Lorentz transformation as a 2x2 matrix."""
+    """Defines the Lorentz transformation as a 2x2 matrix."""
     gamma=1.0/np.sqrt(1-v**2)
     return np.array([[gamma,-gamma*v],[-gamma*v,gamma]])
 
 def lorentz2(v):
-    """De=fines the Lorentz transformation as a 2x2 matrix."""
+    """Defines the Lorentz transformation as a 2x2 matrix."""
     c=3e8
     gamma=1.0/np.sqrt(1-v*v/3e8)
     return np.array([[gamma,-gamma*v],[-gamma*v,gamma]])
