@@ -17,6 +17,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from IPython.display import HTML
+import mpl_toolkits.mplot3d.axes3d as p3
+import pandas as pd
+import matplotlib._color_data as mcd
+import matplotlib.patches as mpatch
 
 from modules.lorentz import lorentz
 
@@ -326,13 +330,6 @@ def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, c
     
     return HTML(ani.to_jshtml())
 
-#-------------------------------------------------- WIP --------------------------------------------------
-
-import mpl_toolkits.mplot3d.axes3d as p3
-import pandas as pd
-
-import matplotlib._color_data as mcd
-import matplotlib.patches as mpatch
 
 def _transition_plot(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=False,classical=True):
     theta = np.linspace(0,2*np.pi,100)
@@ -403,3 +400,5 @@ def _transition_plot(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=
 #                 ax.plot(xref+tstart[i]*v,yref,[t])
 #                 ax.plot(-xref+tstart[i]*v,yref,[t])
     plt.show()
+    
+#-------------------------------------------------- WIP --------------------------------------------------
