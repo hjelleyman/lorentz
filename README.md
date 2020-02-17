@@ -1,2 +1,4 @@
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/hjelleyman/lorentz/master?filepath=lorentz1.ipynb)
-# lorentz
+# Special Relativity and other things
+
+> How to use this code
+
