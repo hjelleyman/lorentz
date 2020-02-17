@@ -16,8 +16,8 @@ To run this code you need python3 installed and Anaconda for installing python p
 
 First download the repository into a folder then run the following commands:
 
-'''
+```
 conda create -n lorentz
 conda activate lorentz
 conda install --file requirements.txt
-'''
+```
