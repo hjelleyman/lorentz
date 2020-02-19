@@ -1,14 +1,7 @@
 """
 doppler
-----------
+-------
 helper functions for the doppler notebook.
-
-Functions:
-----------
-    
-    findnearest(array, value)
-        
-    
 """
 
 #--------------------------------------------- Importing relevant modules --------------------------------------------------
@@ -28,12 +21,36 @@ from modules.lorentz import lorentz
 
 
 def animate_soundwaves(N=200):
+    """Summary
+    
+    Parameters
+    ----------
+    N : int, optional
+        Number of frames in the animation. 
+        More results in a smoother animation but takes more memory.
+    
+    Returns
+    -------
+    HTML-animation
+        Animation of a soundwave being emitted by a point source.
+    """
     theta = np.linspace(0,2*np.pi,100)
     time = np.linspace(0,1,N)
     v = 25 
     
     
     def run(t, tstart, circles):
+        """Summary
+        
+        Parameters
+        ----------
+        t : int
+            The time value for the frame.
+        tstart : list
+            The time values for when each wavefront is produced.
+        circles : list of matplotlib lines
+            The matplotlib lines for the circlular wavefronts.
+        """
         if t%30 == 0:
             tstart += [time[t]]
             circles += plt.plot([],[],'black')
@@ -60,11 +77,38 @@ def animate_soundwaves(N=200):
     return HTML(ani.to_jshtml())
 
 def animate_soundwaves_moving_source(N=200, source_history=False):
+    """Plots soundwaves being emitted from a source which is moving.
+    
+    Parameters
+    ----------
+    N : int, optional
+        Number of frames.
+    source_history : bool, optional
+        Whether to plot dots where each circle originated or not for ease of demonstration.
+    
+    Returns
+    -------
+    HTML-animation
+        Animation of a moving source emitting soundwaves.
+    """
     theta = np.linspace(0,2*np.pi,100)
     time = np.linspace(0,1,N)
     v = 25
 
     def run(t,xstart, tstart, circles):
+        """Generates frames for the animations
+        
+        Parameters
+        ----------
+        t : int
+            Current time for each frame.
+        xstart : listlike
+            x-coordinates for each of the wavefront sources.
+        tstart : listlike
+            t-coordinates for each of the wavefront sources.
+        circles : list of matplotlib lines
+            The matplotlib lines for the circlular wavefronts.
+        """
         source.set_data(x0[t], y0[t])
         if t%30 == 0:
             xstart += [x0[t]]
@@ -98,11 +142,39 @@ def animate_soundwaves_moving_source(N=200, source_history=False):
     return HTML(ani.to_jshtml())
 
 def animate_transverse_moving_source(N=200):
+    """PLots a transverse wave on top of a moving source to demonstrate that the doppler effect
+        is not restricted to longitudinal waves.
+    
+    Parameters
+    ----------
+    N : int, optional
+        Number of frames.
+    
+    Returns
+    -------
+    HTML-animation
+        Animation of wavefronts and a transverse wave with a moving source.
+    """
     theta = np.linspace(0,2*np.pi,100)
     time = np.linspace(0,1,N)
     v = 25
 
     def run(t,xstart, tstart, circles, transverse):
+        """Summary
+        
+        Parameters
+        ----------
+        t : int
+            Current time for each frame.
+        xstart : listlike
+            x-coordinates for each of the wavefront sources.
+        tstart : listlike
+            t-coordinates for each of the wavefront sources.
+        circles : list of matplotlib lines
+            The matplotlib lines for the circlular wavefronts.
+        transverse : np.ndarray
+            Data for the transverse wave line.
+        """
         source.set_data(x0[t], y0[t])
         if t%30 == 0:
             xstart += [x0[t]]
@@ -144,7 +216,31 @@ def animate_transverse_moving_source(N=200):
     return HTML(ani.to_jshtml())
 
 def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True,classical=False):
+    """Fully customisable animation of the doppler effect 
+        which can plot both relativistic and classical results.
     
+    Parameters
+    ----------
+    v : int, optional
+        Velocity of the source.
+    c : float, optional
+        Speed of light.
+    N : int, optional
+        Number of frames
+    v_wave : float, optional
+        Velocity of the wave.
+    freq : int, optional
+        Frequency for which the wave is emmitting wavefronts.
+    relativistic : bool, optional
+        Whether to plot the relativistic result or not.
+    classical : bool, optional
+        Whether to plot the classical result or not.
+    
+    Returns
+    -------
+    HTML-animation
+        Description
+    """
     theta = np.linspace(0,2*np.pi,100)
     time = np.arange(N)
     xkcd = list(mcd.XKCD_COLORS.values())
@@ -183,6 +279,21 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
     x_now = v_wave*(0-adjusted_tstart)+adjusted_xstart
     
     def run(t, tstart, xstart, rel_circles, clas_circles):
+        """Summary
+        
+        Parameters
+        ----------
+        t : TYPE
+            Description
+        tstart : TYPE
+            Description
+        xstart : TYPE
+            Description
+        rel_circles : TYPE
+            Description
+        clas_circles : TYPE
+            Description
+        """
         if relativistic:
             x_now = v_wave*(t-adjusted_tstart)+adjusted_xstart
             
@@ -218,12 +329,45 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
     return HTML(ani.to_jshtml())
     
 def lorentz(v):
-        """De=fines the Lorentz transformation as a 2x2 matrix."""
+        """De=fines the Lorentz transformation as a 2x2 matrix.
+        
+        Parameters
+        ----------
+        v : TYPE
+            Description
+        
+        Returns
+        -------
+        TYPE
+            Description
+        """
         gamma=1.0/np.sqrt(1-v*v)
         return np.array([[gamma,-gamma*v],[-gamma*v,gamma]])
         
 
 def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, classical=True):
+    """Summary
+    
+    Parameters
+    ----------
+    c : float, optional
+        Description
+    N : int, optional
+        Description
+    v_wave : float, optional
+        Description
+    freq : int, optional
+        Description
+    relativistic : bool, optional
+        Description
+    classical : bool, optional
+        Description
+    
+    Returns
+    -------
+    TYPE
+        Description
+    """
     xkcd = list(mcd.XKCD_COLORS.values())
     time=np.linspace(-6,20,100)
     space=np.linspace(-20,20,100)
@@ -299,6 +443,13 @@ def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, c
             wavefronts[ii].set_data(xdata,ydata)
 
     def run(v):
+        """Summary
+        
+        Parameters
+        ----------
+        v : TYPE
+            Description
+        """
         if relativistic:
             ax = AX[0]
             for ii in range(len(initial_data)):
@@ -332,6 +483,25 @@ def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, c
 
 
 def _transition_plot(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=False,classical=True):
+    """Summary
+    
+    Parameters
+    ----------
+    v : int, optional
+        Description
+    c : float, optional
+        Description
+    N : int, optional
+        Description
+    v_wave : float, optional
+        Description
+    freq : int, optional
+        Description
+    relativistic : bool, optional
+        Description
+    classical : bool, optional
+        Description
+    """
     theta = np.linspace(0,2*np.pi,100)
     time = np.arange(N)
 

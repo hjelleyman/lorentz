@@ -1,38 +1,39 @@
-"""lorentz
-----------
+"""
+lorentz
+-------
 helper functions for the lorentz notebook.
 
 Functions:
 ----------
-    
+
     findnearest(array, value)
         Returns the nearest element of an array to a number.
-        
+
     plot_empty_space()
         Plots an empty plot to represent empty space.
-    
+
     plot_light_cones()
         Plots light cones with labels for different regions of spacetime.
-        
+
     plot_event_at_origin()
         PLots an event at the origin of a set of light cones.
-        
+
     plot_flashing_lighthouse()
         Plots the sequence of lights flashing at a lighthouse.
-        
+
     lorentz(v)
         Defines the Lorentz transformation as a 2x2 matrix.
-        
+
     plot_lighthouse_transform()
         Plots a transformed persepective of a lighthouse.
-    
+
     animation_lorentz_1()
         Creates an animation showing how regularly spaced events move through space for a moving observer.
-        
+
     animation_with_hyperbolae()
         Creates an animation showing how regularly spaced events move through space for a moving observer with hyperbolae.
-    
-    
+
+
 """
 
 #--------------------------------------------- Importing relevant modules --------------------------------------------------
@@ -52,12 +53,26 @@ from numpy import genfromtxt
 
 
 def findnearest(array, value):
-    """Returns the nearest element of an array to a number."""
+    """Returns the nearest element of an array to a number.
+    
+    Parameters
+    ----------
+    array : numpy array
+        The array for which we want to know the closest element to the provided value.
+    value : float
+        The value we want to find in the array.
+    
+    Returns
+    -------
+    float
+        The element of the array closest to the value provided.
+    """
     idx = np.abs(array - value).argmin()
     return array[idx]
 
 def plot_empty_space():
-    """Plots an empty plot to represent empty space."""
+    """Plots an empty plot to represent empty space.
+    """
     time = genfromtxt('data/lz_time.csv', delimiter=',')
     space = genfromtxt('data/lz_space.csv', delimiter=',')
     
@@ -68,7 +83,8 @@ def plot_empty_space():
     
     
 def plot_light_cones():
-    """Plots light cones with labels for different regions of spacetime."""
+    """Plots light cones with labels for different regions of spacetime.
+    """
     time = genfromtxt('data/lz_time.csv', delimiter=',')
     space = genfromtxt('data/lz_space.csv', delimiter=',')
     line1 = genfromtxt('data/lz_line1.csv', delimiter=',')
@@ -101,7 +117,8 @@ def plot_light_cones():
     
     
 def plot_event_at_origin():
-    """PLots an event at the origin of a set of light cones."""
+    """PLots an event at the origin of a set of light cones.
+    """
     time = genfromtxt('data/lz_time.csv', delimiter=',')
     space = genfromtxt('data/lz_space.csv', delimiter=',')
     line1 = genfromtxt('data/lz_line1.csv', delimiter=',')
@@ -118,7 +135,8 @@ def plot_event_at_origin():
     
     
 def plot_flashing_lighthouse():
-    """Plots the sequence of lights flashing at a lighthouse."""
+    """Plots the sequence of lights flashing at a lighthouse.
+    """
     time = genfromtxt('data/lz_time.csv', delimiter=',')
     space = genfromtxt('data/lz_space.csv', delimiter=',')
     line1 = genfromtxt('data/lz_line1.csv', delimiter=',')
@@ -137,12 +155,24 @@ def plot_flashing_lighthouse():
     plt.show()
     
 def lorentz(v):
-    """De=fines the Lorentz transformation as a 2x2 matrix."""
+    """Defines the Lorentz transformation as a 2x2 matrix.
+    
+    Parameters
+    ----------
+    v : float64
+        A velocity for which we want to apply the lorentz transform.
+    
+    Returns
+    -------
+    np.ndarray
+        The lorentz transformation matrix associated with the velocity.
+    """
     gamma=1.0/np.sqrt(1-v*v)
     return np.array([[gamma,-gamma*v],[-gamma*v,gamma]])
 
 def plot_lighthouse_transform():
-    """Plots a transformed persepective of a lighthouse."""
+    """Plots a transformed persepective of a lighthouse.
+    """
     time = genfromtxt('data/lz_time.csv', delimiter=',')
     space = genfromtxt('data/lz_space.csv', delimiter=',')
     line1 = genfromtxt('data/lz_line1.csv', delimiter=',')
@@ -167,7 +197,14 @@ def plot_lighthouse_transform():
     
 
 def animation_lorentz_1():
-    """Creates an animation showing how regularly spaced events move through space for a moving observer."""
+    """Creates an animation showing how regularly spaced events move through space
+         for a moving observer.
+    
+    Returns
+    -------
+    HTML-animation
+        Animation of regularly spaced events being transfomed by the lorentz transform.
+    """
     time=np.linspace(-6,20,100)
     space=np.linspace(-20,20,100)
     line1=np.linspace(-20,20,100)
@@ -178,11 +215,25 @@ def animation_lorentz_1():
     line6 = pd.read_hdf('data/lz_line6.hdf', 'line6')
     
     def datagen(u=1.05):
+        """Generates the velocities used for the run function in the animation.
+        
+        Parameters
+        ----------
+        u : float, optional
+            The initial velocity value.
+        
+        Yields
+        ------
+        float
+            Successive velocity values used in the animation.
+        """
         while u > -1:
             u -= 0.05
             yield u
     
     def init():
+        """Initial Frame of the animation.
+        """
         l1.set_data(space,line1)
         l2.set_data(space,line2)
         l4.set_data(line3, line4)
@@ -190,6 +241,18 @@ def animation_lorentz_1():
         ax.set_ylim(-2,20)
         
     def run(u):
+        """Updates sucssesive frames in the animation.
+        
+        Parameters
+        ----------
+        u : float
+            Velocity for which the events are being transformed in each frame.
+        
+        Returns
+        -------
+        matplotlib line
+            This line has its data updated in each frame.
+        """
         l3.set_data(line6[findnearest(line6.columns, u)], line5[findnearest(line5.columns, u)])
         text.set_text('$u$ = {:.2f}c'.format(u))
         return l3
@@ -209,7 +272,14 @@ def animation_lorentz_1():
     return HTML(ani.to_jshtml())
 
 def animation_with_hyperbolae():
-    """Creates an animation showing how regularly spaced events move through space for a moving observer with hyperbolae."""
+    """Creates an animation showing how regularly spaced events move
+         through space for a moving observer with hyperbolae.
+    
+    Returns
+    -------
+    HTML-animation
+        Animation of regually spaced events being transfomed and moved along hyperbolae.
+    """
     time=np.linspace(-6,20,100)
     space=np.linspace(-20,20,100)
     line1=np.linspace(-20,20,100)
@@ -221,6 +291,18 @@ def animation_with_hyperbolae():
     
     
     def run(u):
+        """Updates sucssesive frames in the animation.
+        
+        Parameters
+        ----------
+        u : float
+            Velocity for which the events are being transformed in each frame.
+        
+        Returns
+        -------
+        matplotlib line
+            This line has its data updated in each frame.
+        """
         l3.set_data(line6[findnearest(line6.columns, u)], line5[findnearest(line5.columns, u)])
         text.set_text('$u$ = {:.2f}c\n$T$ = {:.2f}$T_0$'.format(u,1/np.sqrt(1-u*u)))
         reference_delta_T.set_data([7,7], [5, 5-1/np.sqrt(1-u*u)])
@@ -288,6 +370,9 @@ def animation_with_hyperbolae():
     return HTML(ani.to_jshtml())
 
 def lighthouse():
+    """Plots a still of two sets of successive time events with no lorentz
+         transform and a constant spatial separation.
+    """
     time = genfromtxt('data/lz_time.csv', delimiter=',')
     space = genfromtxt('data/lz_space.csv', delimiter=',')
     line1=np.linspace(-20,20,100)
@@ -307,6 +392,13 @@ def lighthouse():
     
     
 def animated_lighthouse():
+    """Creates an animation to demonstrate length contraction.
+    
+    Returns
+    -------
+    HTML-animation
+        Animation showing length contraction.
+    """
     time=np.linspace(-6,20,100)
     space=np.linspace(-20,20,100)
     line1=np.linspace(-20,20,100)
@@ -317,6 +409,8 @@ def animated_lighthouse():
     line6 = pd.read_hdf('data/lz_line6.hdf', 'line6')
     
     def init():
+        """Generates the initial frame of the animation.
+        """
         l1.set_data(space,line1)
         l2.set_data(space,line2)
         l4.set_data(line3, line4)
@@ -326,6 +420,18 @@ def animated_lighthouse():
         ax.set_ylim(-2,20)
         
     def run(u):
+        """Generates sucssesive frames of the animation.
+        
+        Parameters
+        ----------
+        u : float
+            Velocity for the lorentz transform to generate the frame.
+        
+        Returns
+        -------
+        tuple of matplotlib lines
+            these lines have their data updated in each frame.
+        """
         l3.set_data(line6[findnearest(line6.columns, u)], line5[findnearest(line5.columns, u)])
         line3=np.zeros(11)
         line4=np.linspace(0,10,11)
