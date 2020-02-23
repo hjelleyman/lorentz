@@ -2,54 +2,18 @@
 lorentz
 -------
 helper functions for the lorentz notebook.
-
-Functions:
-----------
-
-    findnearest(array, value)
-        Returns the nearest element of an array to a number.
-
-    plot_empty_space()
-        Plots an empty plot to represent empty space.
-
-    plot_light_cones()
-        Plots light cones with labels for different regions of spacetime.
-
-    plot_event_at_origin()
-        PLots an event at the origin of a set of light cones.
-
-    plot_flashing_lighthouse()
-        Plots the sequence of lights flashing at a lighthouse.
-
-    lorentz(v)
-        Defines the Lorentz transformation as a 2x2 matrix.
-
-    plot_lighthouse_transform()
-        Plots a transformed persepective of a lighthouse.
-
-    animation_lorentz_1()
-        Creates an animation showing how regularly spaced events move through space for a moving observer.
-
-    animation_with_hyperbolae()
-        Creates an animation showing how regularly spaced events move through space for a moving observer with hyperbolae.
-
-
 """
 
-#--------------------------------------------- Importing relevant modules --------------------------------------------------
+#---------------- Importing relevant modules ----------------
 
-import numpy as np
-import matplotlib.pyplot as plt
-from ipywidgets import interactive, FloatSlider
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from IPython.display import HTML
-import pandas as pd
+import numpy as np                          # For arrays.
+import matplotlib.pyplot as plt             # For plotting.
+import matplotlib.animation as animation    # For animations.
+from IPython.display import HTML            # For displaying in jupyter.
+import pandas as pd                         # For reading and saving labeled data.
+from numpy import genfromtxt                # For reading data from file.
 
-from numpy import genfromtxt
-
-#-------------------------------------------------- Implemented functions --------------------------------------------------
+#---------------- Implemented functions ---------------------
 
 
 def findnearest(array, value):
@@ -159,7 +123,7 @@ def lorentz(v):
     
     Parameters
     ----------
-    v : float64
+    v : float
         A velocity for which we want to apply the lorentz transform.
     
     Returns
@@ -371,7 +335,7 @@ def animation_with_hyperbolae():
 
 def lighthouse():
     """Plots a still of two sets of successive time events with no lorentz
-         transform and a constant spatial separation.
+    transform and a constant spatial separation.
     """
     time = genfromtxt('data/lz_time.csv', delimiter=',')
     space = genfromtxt('data/lz_space.csv', delimiter=',')

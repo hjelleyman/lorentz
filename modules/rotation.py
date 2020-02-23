@@ -1,64 +1,68 @@
-"""rotation
-----------
+"""
+rotation
+--------
 This script contains helper functions for the rotation notebook.
-
-
-Functions:
------------
-
-    animate_plot_1()
-        Creates an animation of a vector rotating in Euclidian Space.
-    
-    animate_2_euclidian_vedctors()
-        Creates two animations showing two rotating vectors in Euclidian spacetime.
 """
 
+#---------------- Importing relevant modules ----------------
 
 
-import numpy as np
-import matplotlib.pyplot as plt
-from ipywidgets import interactive, FloatSlider
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from IPython.display import HTML
-import pandas as pd
+import numpy as np                        # For matrix stuff.
+import matplotlib.pyplot as plt           # For plotting images.
+import matplotlib.animation as animation  # For creating animations.
+from IPython.display import HTML          # For generating HTML output animations
+import pandas as pd                       # For storing and reading data.
 
-from modules.lorentz import findnearest
-#------------------------------------------------------------ Implemented --------------------------------------------------
+#---------------- Importing custom modules ------------------
+
+from modules.lorentz import findnearest   # For locating values in arrays.
+
+#---------------- Implemented functions ---------------------
 
 def animate_plot_1():
-    """Creates an animation of a vector rotating in Euclidian Space."""
+    """Creates an animation of a vector rotating in Euclidian space.
+    
+    Returns
+    -------
+    matplotlib animation
+        Animation of a vector rotating in Euclidian space.
+    """
     
     # Create the figure and axis.
-    fig, ax = plt.subplots(figsize=(10,10))
+    fig, ax = plt.subplots(figsize = (10, 10))
     
     # Plot axis lines for aesthetic.
-    plt.plot([-2,2],[0,0],'k', alpha = 0.1)
-    plt.plot([0,0],[-2,2],'k', alpha = 0.1)
+    plt.plot([-2, 2], [0, 0], 'k', alpha = 0.1)
+    plt.plot([0, 0], [-2, 2], 'k', alpha = 0.1)
     
     # Plot the line which we will rotate and add descriptive text.
-    line, = ax.plot([],[],'r', label = '$[x,y]=[sin(\\theta), cos(\\theta)]$')
-    xangle, = ax.plot([],[],'r')
-    text = plt.text(0.14*np.cos(np.pi/4), 0.14*np.sin(np.pi/4),'', size= 15)
-    length = plt.text(-1.45, 1.2,'L = $\\sqrt{x^2+y^2} = 1$', size= 15)
+    line,   = ax.plot([], [], 'r', label = '$[x,y]=[sin(\\theta), cos(\\theta)]$')
+    xangle, = ax.plot([], [], 'r')
+    text    = plt.text(0.14 * np.cos(np.pi / 4), 0.14 * np.sin(np.pi / 4), '', size= 15)
+    length  = plt.text(-1.45, 1.2, 'L = $\\sqrt{x^2+y^2} = 1$', size = 15)
     
     # length of the x component.
     xlength, = plt.plot([], [],'--r')
-    xtext = plt.text(0, 0,'x', size= 15)
+    xtext    = plt.text(0, 0, 'x', size= 15)
     
     # length of the y component.
     ylength, = plt.plot([], [],'-.r')
-    ytext = plt.text(0, 0,'y', size= 15)
+    ytext    = plt.text(0, 0, 'y', size= 15)
 
     # axis stuff
     plt.axis('off')
-    plt.xlim([-1.5,1.5])
-    plt.ylim([-1.5,1.5])
+    plt.xlim([-1.5, 1.5])
+    plt.ylim([-1.5, 1.5])
     
     
     def animate(theta):
-        """The animation function for this image."""
+        """The animation function for this image.
+        
+        Parameters
+        ----------
+        theta : float
+            Angle of the vector.
+        """
         # normalising theta.
         theta = theta *np.pi/50
         thetavec = np.linspace(0,theta)
@@ -88,9 +92,22 @@ def animate_plot_1():
     return HTML(ani.to_jshtml())
     
 def animate_2_euclidian_vedctors():
-    """ Creates two animations showing two rotating vectors in Euclidian spacetime."""
+    """Creates two animations showing two rotating vectors in Euclidian spacetime.
+    
+    Returns
+    -------
+    tuple of matplotlib animation
+        Animations of two vectors rotating in euclidian space.
+    """
     
     def animate_constant_delta(theta):
+        """Generates frame of two vectors rotating with a constant angle between them.
+        
+        Parameters
+        ----------
+        theta : float
+            Angle of the first vector.
+        """
         theta = theta *np.pi/50
         del_theta = 0.6
         theta2 = (theta + del_theta) % (2*np.pi)
@@ -128,6 +145,13 @@ def animate_2_euclidian_vedctors():
         ax.legend()
     
     def animate_changing_delta(del_theta):
+        """Generates a frame of two vectors rotating with changing angle between them.
+        
+        Parameters
+        ----------
+        del_theta : float
+            Angle between the two vectors.
+        """
         del_theta = del_theta *np.pi/50
         theta = 1.2
         theta2 = (theta + del_theta) % (2*np.pi)
@@ -201,7 +225,22 @@ def animate_2_euclidian_vedctors():
 
 
 def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
-    """Creates an animation showing how regularly spaced events move through space for a moving observer with hyperbolae."""
+    """Creates an animation showing how regularly spaced events move through space for a moving observer with hyperbolae.
+    
+    Parameters
+    ----------
+    vec1 : list, optional : [x,t]
+        Initial conditions for the first vector.
+    vec2 : list, optional : [x,t]
+        Initial conditions for the second vector.
+    udelta : int, optional
+        Velocity difference between the two vectors.
+    
+    Returns
+    -------
+    matplotlib animation
+        Animation of two events being observed at different velocities on a spacetime plot.
+    """
     
     time=np.linspace(-6,20,100)
     space=np.linspace(-20,20,100)
@@ -214,12 +253,25 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
     vec20 = vec2.copy()
     
     def datagen(u=1):
-        """This is a generator which generates the inputs to the run function over the animation."""
+        """This is a generator which generates the inputs to the run function over the animation.
+        
+        Parameters
+        ----------
+        u : int, optional
+            Initial velocity.
+        
+        Yields
+        ------
+        float
+            Velocities in the sequence.
+        """
         while u > -1:
             u -= 0.05
             yield u
     
     def init():
+        """Initiates the animation.
+        """
         l1.set_data(space, line1)
         l2.set_data(space, line2)
         ax.set_xlim(-20,20)
@@ -227,11 +279,19 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
     values = []
     
     def run(u, udelta, values):
+        """Generates a frame for the animation.
+        
+        Parameters
+        ----------
+        u : float
+            Velocity the events are being observed at.
+        udelta : float
+            Velocity difference between the two events.
+        values : list
+            Record of the values of the dot product. Used for debugging this function when it was broken.
+        """
         c = 1
-#         u = u*c
-#         udelta = udelta*c
         u2 = (u + udelta) / (1 + (u*udelta)/c**2)
-#         u2 = u + udelta
         
         x1, t1 = np.dot(vec1, lorentz(u))
         x2, t2 = np.dot(vec2, lorentz(u2))
@@ -282,21 +342,45 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
     return HTML(ani.to_jshtml())
 
 def lorentz(v):
-    """Defines the Lorentz transformation as a 2x2 matrix."""
+    """Defines the Lorentz transformation as a 2x2 matrix. Using c=1.
+    
+    Parameters
+    ----------
+    v : float
+        Observation velocity.
+    
+    Returns
+    -------
+    np.ndarray
+        2x2 Lorentz transformation matrix.
+    """
     gamma=1.0/np.sqrt(1-v**2)
     return np.array([[gamma,-gamma*v],[-gamma*v,gamma]])
 
 def lorentz2(v):
-    """Defines the Lorentz transformation as a 2x2 matrix."""
+    """Defines the Lorentz transformation as a 2x2 matrix. Using c=3e8.
+    
+    Parameters
+    ----------
+    v : float
+        Observation velocity.
+    
+    Returns
+    -------
+    np.ndarray
+        2x2 Lorentz transformation matrix.
+    """
     c=3e8
     gamma=1.0/np.sqrt(1-v*v/3e8)
     return np.array([[gamma,-gamma*v],[-gamma*v,gamma]])
 
-#------------------------------------------------------------ WIP ----------------------------------------------------------
+#---------------- WIP ---------------------------------------
 
 
 
-#------------------------------------------------------------ Currently Unused ---------------------------------------------
+#---------------- Currently Unused --------------------------
+
+# from ipywidgets import interactive, FloatSlider  # For interactive plots
 
 # def plot_euclidian_vector():
     

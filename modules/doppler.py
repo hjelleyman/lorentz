@@ -4,20 +4,22 @@ doppler
 helper functions for the doppler notebook.
 """
 
-#--------------------------------------------- Importing relevant modules --------------------------------------------------
+#---------------- Importing relevant modules ----------------
 
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from IPython.display import HTML
-import mpl_toolkits.mplot3d.axes3d as p3
-import pandas as pd
-import matplotlib._color_data as mcd
-import matplotlib.patches as mpatch
+import numpy as np                          # For making arrays.
+import matplotlib.pyplot as plt             # For plotting.
+import matplotlib.animation as animation    # For animations.
+from IPython.display import HTML            # For HTML output of animations.
+import mpl_toolkits.mplot3d.axes3d as p3    # For the 3D transition plot.
+import pandas as pd                         # For storing and saving data with labels.
+import matplotlib._color_data as mcd        # For color schemes.
+import matplotlib.patches as mpatch         # For plotting stuff.
 
-from modules.lorentz import lorentz
+#---------------- Importing custom modules ------------------
 
-#-------------------------------------------------- Implemented functions --------------------------------------------------
+from modules.lorentz import lorentz         # Lorentz transfom function.
+
+#---------------- Implemented functions ---------------------
 
 
 def animate_soundwaves(N=200):
@@ -239,7 +241,7 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
     Returns
     -------
     HTML-animation
-        Description
+        Animation of the doppler effect in action.
     """
     theta = np.linspace(0,2*np.pi,100)
     time = np.arange(N)
@@ -283,16 +285,16 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
         
         Parameters
         ----------
-        t : TYPE
-            Description
-        tstart : TYPE
-            Description
-        xstart : TYPE
-            Description
-        rel_circles : TYPE
-            Description
-        clas_circles : TYPE
-            Description
+        t : int
+            Time value.
+        tstart : list
+            List of times when wavefronts are created.
+        xstart : list
+            List of x values when wavefronts are created.
+        rel_circles : list of matplotlib lines
+            the relativistic circles which have been plotted.
+        clas_circles : list of matplotlib lines
+            The classical circles which have been plotted.
         """
         if relativistic:
             x_now = v_wave*(t-adjusted_tstart)+adjusted_xstart
@@ -329,44 +331,44 @@ def full_doppler(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=True
     return HTML(ani.to_jshtml())
     
 def lorentz(v):
-        """De=fines the Lorentz transformation as a 2x2 matrix.
+        """Defines the Lorentz transformation as a 2x2 matrix.
         
         Parameters
         ----------
-        v : TYPE
-            Description
+        v : float
+            Velocity which the transform is needed for.
         
         Returns
         -------
-        TYPE
-            Description
+        np.ndarray
+            2x2 Lorentz transfomation matrix.
         """
         gamma=1.0/np.sqrt(1-v*v)
         return np.array([[gamma,-gamma*v],[-gamma*v,gamma]])
         
 
 def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, classical=True):
-    """Summary
+    """Generates an animation of the doppler effect on a spacetime plot.
     
     Parameters
     ----------
     c : float, optional
-        Description
+        Speed of light.
     N : int, optional
-        Description
+        Number of Frames.
     v_wave : float, optional
-        Description
+        Wave velocity.
     freq : int, optional
-        Description
+        Frequency of the waves being emmitted.
     relativistic : bool, optional
-        Description
+        Plotting for the relativistic case.
     classical : bool, optional
-        Description
+        Plotting for the classical case.
     
     Returns
     -------
-    TYPE
-        Description
+    HTML-animation
+        Animation of the doppler effect on a spacetime plot.
     """
     xkcd = list(mcd.XKCD_COLORS.values())
     time=np.linspace(-6,20,100)
@@ -443,12 +445,12 @@ def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, c
             wavefronts[ii].set_data(xdata,ydata)
 
     def run(v):
-        """Summary
+        """Generates each frame of the animation.
         
         Parameters
         ----------
-        v : TYPE
-            Description
+        v : float
+            Velocity for the frame.
         """
         if relativistic:
             ax = AX[0]
@@ -483,24 +485,24 @@ def spacetime_plot(c = 3e8, N=120, v_wave = 3e8, freq = 20, relativistic=True, c
 
 
 def _transition_plot(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=False,classical=True):
-    """Summary
+    """Plots something to help us transition to animations of the doppler effect to a spacetime animation.
     
     Parameters
     ----------
     v : int, optional
-        Description
+        Velocity of source.
     c : float, optional
-        Description
+        Speed of light.
     N : int, optional
-        Description
+        Length of the time axis
     v_wave : float, optional
-        Description
+        Velocity of the wave.
     freq : int, optional
-        Description
+        Frequency of the wave.
     relativistic : bool, optional
-        Description
+        Whether to plot the relitivisic case.
     classical : bool, optional
-        Description
+        Whether to plot the classical case.
     """
     theta = np.linspace(0,2*np.pi,100)
     time = np.arange(N)
@@ -518,7 +520,6 @@ def _transition_plot(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=
     
     ax.plot(time*v,0*time,time, '-', color = 'black')
     
-#     source, = ax.plot([0],[0],[0], 'o', color = 'black', markersize = 10)
     
     x0 = np.linspace(-v*N*1/2,v*N*1/2,N)
     y0 = np.zeros(N)
@@ -566,9 +567,6 @@ def _transition_plot(v=0, c = 3e8, N=200, v_wave = 3e8, freq = 20, relativistic=
                 yref = np.linspace(0,-d)*1.2
                 xref = xref[d>0]
                 yref = yref[d>0]
-
-#                 ax.plot(xref+tstart[i]*v,yref,[t])
-#                 ax.plot(-xref+tstart[i]*v,yref,[t])
     plt.show()
     
-#-------------------------------------------------- WIP --------------------------------------------------
+#---------------- WIP ---------------------------------------
