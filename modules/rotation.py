@@ -1,3 +1,4 @@
+
 """
 rotation
 --------
@@ -83,10 +84,10 @@ def animate_plot_1():
         ylength.set_label('y = {:.02f}'.format(y))
         ytext.set_position((x+0.05, y/2))
         ytext.set_text('y = {:.2f}'.format(y))
-        length.set_text(f'$L=\\sqrt{{x^2+y^2}}$\n  $=\\sqrt{{({x:.2f})^2+({y:.2f})^2}}$\n  $={np.sqrt(x**2+y**2):.2f}$')
+        length.set_text('$L=\\sqrt{{x^2+y^2}}$\n  $=\\sqrt{{({:.2f})^2+({:.2f})^2}}$\n  $={:.2f}$'.format(x, y, np.sqrt(x**2+y**2)))
 
     # Generate the animation.
-    ani = animation.FuncAnimation(fig, animate, frames=100, interval=100, blit=True)
+    ani = animation.FuncAnimation(fig, animate, frames=100, interval=100, blit=False)
     
     # Return the animation as a javasript HTML applet.
     return HTML(ani.to_jshtml())
@@ -126,20 +127,20 @@ def animate_2_euclidian_vedctors():
         xangle_2.set_data(0.2*np.cos(thetavec2)*(1+0.05*thetavec2), 0.2*np.sin(thetavec2)*(1+0.05*thetavec2))
         line_2.set_label('$\\theta_2 = $'+'{:.2f} radians'.format(theta2))
         
-        dot_text.set_text(f'$u_1 \cdot u_2 = x_1x_2 + y_1y_2 $\n         $= ({x:.2f})({x2:.2f}) + ({y:.2f})({y2:.2f})$\n         $= {x*x2 + y*y2:.2f}$')
+        dot_text.set_text('$u_1 \cdot u_2 = x_1x_2 + y_1y_2 $\n         $= ({:.2f})({:.2f}) + ({:.2f})({:.2f})$\n         $= {:.2f}$'.format(x,x2,y,y2,x*x2 + y*y2))
         
         xlength1.set_data([0,x], [y,y])
-        xlength1.set_label(f'$x_1={x:.2f}$')
+        xlength1.set_label('$x_1={:.2f}$'.format(x))
         xtext1.set_position((x/2, y+0.05))
         ylength1.set_data([x,x], [0,y])
-        ylength1.set_label(f'$y_1={y:.2f}$')
+        ylength1.set_label('$y_1={y:.2f}$'.format(y))
         ytext1.set_position((x+0.05, y/2))
         
         xlength2.set_data([0,x2], [y2,y2])
-        xlength2.set_label(f'$x_2={x2:.2f}$')
+        xlength2.set_label('$x_2={x2:.2f}$'.format(x2))
         xtext2.set_position((x2/2, y2+0.05))
         ylength2.set_data([x2,x2], [0,y2])
-        ylength2.set_label(f'$y_2={y2:.2f}$')
+        ylength2.set_label('$y_2={y2:.2f}$'.format(y2))
         ytext2.set_position((x2+0.05, y2/2))
         
         ax.legend()
@@ -171,22 +172,22 @@ def animate_2_euclidian_vedctors():
         line_2.set_label('$\\theta_2 = $'+'{:.2f} radians'.format(theta2))
         
         xlength1.set_data([0,x], [y,y])
-        xlength1.set_label(f'$x_1={x:.2f}$')
+        xlength1.set_label('$x_1={:.2f}$'.format(x))
         xtext1.set_position((x/2, y+0.05))
         ylength1.set_data([x,x], [0,y])
-        ylength1.set_label(f'$y_1={y:.2f}$')
+        ylength1.set_label('$y_1={y:.2f}$'.format(y))
         ytext1.set_position((x+0.05, y/2))
         
         xlength2.set_data([0,x2], [y2,y2])
-        xlength2.set_label(f'$x_2={x2:.2f}$')
+        xlength2.set_label('$x_2={x2:.2f}$'.format(x2))
         xtext2.set_position((x2/2, y2+0.05))
         ylength2.set_data([x2,x2], [0,y2])
-        ylength2.set_label(f'$y_2={y2:.2f}$')
+        ylength2.set_label('$y_2={y2:.2f}$'.format(y2))
         ytext2.set_position((x2+0.05, y2/2))
         
         ax.legend()
 
-        dot_text.set_text(f'$u_1 \cdot u_2 = x_1x_2 + y_1y_2 $\n         $= ({x:.2f})({x2:.2f}) + ({y:.2f})({y2:.2f})$\n         $= {x*x2 + y*y2:.2f}$')
+        dot_text.set_text('$u_1 \cdot u_2 = x_1x_2 + y_1y_2 $\n         $= ({:.2f})({:.2f}) + ({:.2f})({:.2f})$\n         $= {:.2f}$'.format(x,x2,y,y2,x*x2 + y*y2))
     
     fig, ax = plt.subplots(figsize=(10,10))
     plt.plot([-2,2],[0,0],'k', alpha = 0.1)
@@ -301,12 +302,12 @@ def Minkowski_2_vectors_animate(vec1 = [0,9], vec2 = [0,7], udelta = 0):
         l3.set_data([0,x1],[0,t1])
         l4.set_data([0,x2],[0,t2])
         
-        l3.set_label(f'$\mathbf{{x_1^u}} = [{x1:.2f}, {t1:.2f}]$')
-        l4.set_label(f'$\mathbf{{x_2^u}} = [{x2:.2f}, {t2:.2f}]$')
-        text.set_text(f'$\mathbf{{x_1^0}} = [{vec10[0]:.2f}, {vec10[1]:.2f}]$\n$\mathbf{{x_2^0}} = [{vec20[0]:.2f}, {vec20[1]:.2f}]$')
-        equation.set_text(f'$\mathbf{{x_1^u\cdot x_2^u}}=x_1^ux_2^u-t_1^ut_2^u$\n          $= ({x1:.2f})({x2:.2f}) - ({t1:.2f})({t2:.2f})$\n          $= {x1*x2 - t1*t2:.2f}$')
+        l3.set_label('$\mathbf{{x_1^u}} = [{:.2f}, {:.2f}]$'.format(x1,t1))
+        l4.set_label('$\mathbf{{x_2^u}} = [{:.2f}, {:.2f}]$'.format(x2,t2))
+        text.set_text('$\mathbf{{x_1^0}} = [{:.2f}, {:.2f}]$\n$\mathbf{{x_2^0}} = [{:.2f}, {:.2f}]$'.format(vec10[0], vec10[1], vec20[0], vec20[1]))
+        equation.set_text('$\mathbf{{x_1^u\cdot x_2^u}}=x_1^ux_2^u-t_1^ut_2^u$\n          $= ({:.2f})({:.2f}) - ({:.2f})({:.2f})$\n          $= {:.2f}$'.format(x1,x2,t1,t2,x1*x2 - t1*t2))
         
-        legend = ax.legend(prop={"size": 15},title = f'$\mathbf{{u = {u:.2f}}}$', title_fontsize = 15)
+        legend = ax.legend(prop={"size": 15},title = '$\mathbf{{u = {:.2f}}}$'.format(u), title_fontsize = 15)
         legend._legend_box.align = "left"
         
     
